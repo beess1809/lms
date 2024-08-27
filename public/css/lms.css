@@ -1,0 +1,255 @@
+:root {
+    --navy: #3a4283;
+    --oldNavy: #001647;
+    --white: #ffffff;
+    --yellow: #ebbd38;
+    --grey: #d7cfcf;
+    --backWhite: #ffffff;
+}
+.content-wrapper {
+    background-color: var(--backWhite);
+}
+
+.nav-center {
+    position: relative;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+
+.bg-phintraco {
+    background-color: var(--navy);
+    color: var(--white);
+}
+
+.bg-phintraco:hover {
+    background-color: var(--navy);
+    color: var(--white);
+}
+
+.btn-phintraco {
+    background-color: var(--navy);
+    color: var(--white);
+}
+
+.btn-phintraco:hover {
+    background-color: var(--oldNavy);
+    color: var(--white);
+}
+.btn-phintraco:focus {
+    background-color: var(--oldNavy);
+    color: var(--white);
+}
+
+.btn-outline-phintraco {
+    color: var(--navy);
+    border-color: var(--navy);
+}
+
+.btn-outline-phintraco:hover {
+    color: var(--white);
+    border-color: var(--navy);
+    background-color: var(--navy);
+}
+
+.bg-phintraco .navbar-nav .nav-link {
+    color: var(--white);
+}
+
+.bg-phintraco .navbar-nav .nav-link.active {
+    color: var(--white);
+    border-bottom: 2px solid var(--yellow);
+}
+.nav-link:hover {
+    border-bottom: 2px solid var(--yellow);
+    color: var(--white) !important;
+}
+
+.nav-tabs .nav-link {
+    color: var(--grey);
+}
+
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+    color: var(--navy);
+    background-color: var(--backWhite);
+    /* border-color: 2px solid var(--navy) var(--navy) ; */
+    border-color: var(--backWhite) var(--backWhite) var(--navy);
+}
+
+.nav-tabs .nav-link:hover {
+    color: var(--navy) !important;
+}
+
+.nav-tabs {
+    border-bottom: var(--backWhite);
+    background-color: var(--backWhite);
+    border-color: var(--backWhite);
+}
+
+.icon-white {
+    color: var(--white);
+}
+
+.footer-lms {
+    background-color: var(--navy);
+    color: #f7f7f7;
+}
+
+.img-full {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+}
+
+.content-header-background {
+    margin-bottom: 15px;
+    background-image: url("../img/back-gradient.png");
+    height: 180px;
+    background-size: 100% auto;
+}
+
+.content-header-background-home {
+    margin-bottom: 15px;
+    background-image: url("../img/back-gradient.png");
+    height: 250px;
+    background-size: 100% auto;
+}
+
+.center-content {
+    margin-left: 3rem;
+    padding-left: 0.5rem;
+    color: var(--white);
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    /* Whatever width you want */
+}
+
+.center {
+    position: relative;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.content-wrapper > .content {
+    padding-left: 3rem;
+    padding-right: 3rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.border-table {
+    border: 1px solid var(--grey);
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-radius: 10px;
+    align-self: center;
+}
+.border-table:hover {
+    background-color: #f0f0f0;
+}
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin-right: 1rem;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+}
+
+input:checked + .slider {
+    background-color: var(--navy);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--navy);
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+#datatable thead {
+    position: absolute !important;
+    top: -9999px !important;
+    left: -9999px !important;
+}
+.table-nonborder th,
+.table td {
+    padding: none;
+    border-top: none;
+}
+
+.list-training-title {
+    font-size: 20px;
+}
+
+.list-training-content {
+    display: flex;
+    align-items: flex-start;
+    margin-right: 2rem;
+}
+
+.list-training-content .detail {
+    flex: 1;
+    padding: 10px;
+    font-size: 12px;
+}
+.list-training-content .icon {
+    align-self: center;
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: var(--navy);
+    border-color: var(--navy);
+}
