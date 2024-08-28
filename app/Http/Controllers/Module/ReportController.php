@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Master\Company;
 use App\Models\Module\Module;
 use App\Models\Module\Training;
-use App\Models\module\TrainingSub;
+use App\Models\Module\TrainingSub;
 use App\Models\Trainee\TraineeModule;
 use App\Models\Trainee\TraineeTraining;
 use Illuminate\Http\Request;
