@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Module\Answer;
 use App\Models\Module\Question;
 use App\Models\Module\Training;
-use App\Models\module\TrainingSub;
+use App\Models\Module\TrainingSub;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
