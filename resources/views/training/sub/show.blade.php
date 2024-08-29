@@ -58,8 +58,8 @@
                         Your browser does not support the video tag.
                     </video>
                 @elseif ($sub->type_file == 1)
-                    <embed src="{{ route('sub.view', ['file' => base64_encode($sub->file)]) }}" type="application/pdf"
-                        frameBorder="0" scrolling="auto" height="500px" width="100%">
+                    <embed src="{{ route('sub.view', ['file' => base64_encode($sub->file)]) }}#toolbar=0"
+                        type="application/pdf" frameBorder="0" scrolling="auto" height="500px" width="100%">
                 @elseif ($sub->type_file == 2)
                     <picture>
                         <img src="{{ route('sub.view', ['file' => base64_encode($sub->file)]) }}" alt=""

@@ -264,7 +264,7 @@ class TrainingController extends Controller
                 $button = $trainee ? '' : '<button type="button" class="btn btn-phintraco" onClick=clicked("' . route('trainee.training', ['id' => base64_encode($model->id)]) . '")>Mulai</button>';
 
                 if ($trainee) {
-                    $pass = $trainee->is_passed > 0 ? '<span class="badge badge-success">Lulus</span>' : '<span class="badge badge-danger">Tidak Lulus</span>';
+                    $pass =  !is_null($trainee->point) ? ($trainee->is_passed > 0 ? '<span class="badge badge-success">Lulus</span>' : '<span class="badge badge-danger">Tidak Lulus</span>') : '';
                     $status = !is_null($trainee->point) ? 'Selesai' : 'Dalam Penilaian';
                     $score = $trainee->point;
                 } else {
