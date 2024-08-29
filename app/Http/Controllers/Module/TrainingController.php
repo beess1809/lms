@@ -441,16 +441,22 @@ class TrainingController extends Controller
 
         $answer = [];
         $total = 0;
-        foreach ($request->question as $key => $value) {
-            $answer[] = [
-                'question_id' => $value,
-                'answer_id' => $request->answer[$key],
-                'score' => $request->score[$key]
-            ];
-            $total += $request->score[$key];
+
+        if ($request->question) {
+            foreach ($request->question as $key => $value) {
+                $answer[] = [
+                    'question_id' => $value,
+                    'answer_id' => $request->answer[$key],
+                    'score' => $request->score[$key]
+                ];
+                $total += $request->score[$key];
+            }
+
+            $point = $total / count($request->question);
+        } else {
+            $point = 100;
         }
 
-        $point = $total / count($request->question);
         DB::beginTransaction();
         try {
             $model = TraineeTraining::find($id);
