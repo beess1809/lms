@@ -114,7 +114,7 @@ class ReportController extends Controller
             ->join('modules as m', 't.module_id', 'm.id')
             ->join('PECDB.companies as c', 'e.company_id', 'c.id')
             ->join('PECDB.departments as d', 'e.department_code', 'd.code')
-            ->select('trainee_trainings.id', 'e.uuid as uuid', 'e.name as trainee', 'e.empl_id as trainee_nip', 'trainee_trainings.score', 'is_passed', 'finished_at', 'c.name as company', 'd.name as organization', 'm.title as module', 't.title as training', 't.id as training_id')
+            ->select('trainee_trainings.id', 'trainee_trainings.point','e.uuid as uuid', 'e.name as trainee', 'e.empl_id as trainee_nip', 'trainee_trainings.score', 'is_passed', 'finished_at', 'c.name as company', 'd.name as organization', 'm.title as module', 't.title as training', 't.id as training_id')
             ->orderBy('finished_at', 'desc');
 
         if ($request->company) {

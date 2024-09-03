@@ -1,3 +1,4 @@
+<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.13.1/themes/black-tie/jquery-ui.css">
 <form method="POST"
     action="{{ $model->exists ? route('training.update', ['id' => base64_encode($model->id)]) : route('training.store') }}">
     @csrf
@@ -39,7 +40,27 @@
             id="expired_at" value="{{ $model->exists ? $model->expired_at : '' }}">
     </div>
 
+    <div class="form-group">
+        <label for="duration">Duration (Minutes)</label>
+        <input type="number" class="form-control @error('duration') is-invalid @enderror" name="duration"
+            id="duration" min="0" value="{{ $model->exists ? $model->duration : '' }}">
+    </div>
+
 </form>
+
+<script src="{{ asset('adminlte/plugins/moment/moment.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
+
 <script>
     $('.select2').select2();
+    //Datemask dd/mm/yyyy
+    $('#duration').inputmask({
+        "mask": "99:99",
+    })
+    //Datemask2 mm/dd/yyyy
+    $('#datemask2').inputmask('mm/dd/yyyy', {
+        'placeholder': 'mm/dd/yyyy'
+    })
+    //Money Euro
+    $('[data-mask]').inputmask()
 </script>

@@ -64,6 +64,7 @@ class TrainingController extends Controller
             $model->parent_training = $request->parent;
             $model->description = $request->description;
             $model->passing_grade = $request->passing_grade;
+            $model->duration = $request->duration;
             $model->expired_at = $request->expired_at;
             $model->is_active = 0;
             $model->created_by = Auth::user()->uuid;
@@ -143,6 +144,7 @@ class TrainingController extends Controller
             $model->parent_training = $request->parent;
             $model->description = $request->description;
             $model->passing_grade = $request->passing_grade;
+            $model->duration = $request->duration;
             $model->expired_at = $request->expired_at;
             $model->is_active = 0;
             $model->created_by = Auth::user()->uuid;

@@ -1,5 +1,8 @@
 @extends('layouts.app')
 
+@push('css')
+    <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.13.1/themes/black-tie/jquery-ui.css">
+@endpush
 @section('content-header')
     <div class="content-header-background">
         <div class="center-content">
@@ -34,7 +37,6 @@
 
     </div>
 @endsection
-
 
 @push('scripts')
     <script>
