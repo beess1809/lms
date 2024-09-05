@@ -1,4 +1,3 @@
-<link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.13.1/themes/black-tie/jquery-ui.css">
 <form method="POST"
     action="{{ $model->exists ? route('training.update', ['id' => base64_encode($model->id)]) : route('training.store') }}">
     @csrf
@@ -18,11 +17,21 @@
     </div>
 
     <div class="form-group">
+        <label for="type">Tipe</label>
+        <select name="type" id="type" class="form-control @error('type') is-invalid @enderror">
+            <option value="">Pilih Tipe</option>
+            <option value="1" {{ $model->type == 1 ? 'selected' : '' }}>General</option>
+            <option value="2" {{ $model->type == 2 ? 'selected' : '' }}>Remedial</option>
+            <option value="3" {{ $model->type == 3 ? 'selected' : '' }}>Feedback</option>
+        </select>
+    </div>
+
+    <div class="form-group">
         <label for="parent">Parent Training</label>
-        <select name="parent" id="parent" class="form-control select2 @error('type') is-invalid @enderror">
+        <select name="parent" id="parent" class="form-control select2 @error('parent') is-invalid @enderror">
             <option value="">Pilih Parent Training</option>
             @foreach ($parents as $key => $parent)
-                <option value="{{ $parent->id }}" {{ $model->module_parent_id == $parent->id ? 'selected' : '' }}>
+                <option value="{{ $parent->id }}" {{ $model->parent_training == $parent->id ? 'selected' : '' }}>
                     {{ $parent->title }}</option>
             @endforeach
         </select>
