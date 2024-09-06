@@ -62,6 +62,7 @@ class ModuleController extends Controller
         $model->category_id = $request->category;
         $model->module_type_id = $request->type;
         $model->expired_at = $request->expired_at;
+        $model->passing_grade = $request->passing_grade;
         $model->is_active = 0;
         $model->created_by = Auth::user()->uuid;
         $model->save();
@@ -126,6 +127,7 @@ class ModuleController extends Controller
         $model->category_id = $request->category;
         $model->module_type_id = $request->type;
         $model->expired_at = $request->expired_at;
+        $model->passing_grade = $request->passing_grade;
         $model->created_by = Auth::user()->uuid;
         $model->save();
 

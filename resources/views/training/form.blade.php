@@ -17,11 +17,21 @@
     </div>
 
     <div class="form-group">
+        <label for="type">Tipe</label>
+        <select name="type" id="type" class="form-control @error('type') is-invalid @enderror">
+            <option value="">Pilih Tipe</option>
+            <option value="1" {{ $model->type == 1 ? 'selected' : '' }}>General</option>
+            <option value="2" {{ $model->type == 2 ? 'selected' : '' }}>Remedial</option>
+            <option value="3" {{ $model->type == 3 ? 'selected' : '' }}>Feedback</option>
+        </select>
+    </div>
+
+    <div class="form-group">
         <label for="parent">Parent Training</label>
-        <select name="parent" id="parent" class="form-control select2 @error('type') is-invalid @enderror">
+        <select name="parent" id="parent" class="form-control select2 @error('parent') is-invalid @enderror">
             <option value="">Pilih Parent Training</option>
             @foreach ($parents as $key => $parent)
-                <option value="{{ $parent->id }}" {{ $model->module_parent_id == $parent->id ? 'selected' : '' }}>
+                <option value="{{ $parent->id }}" {{ $model->parent_training == $parent->id ? 'selected' : '' }}>
                     {{ $parent->title }}</option>
             @endforeach
         </select>
@@ -39,7 +49,27 @@
             id="expired_at" value="{{ $model->exists ? $model->expired_at : '' }}">
     </div>
 
+    <div class="form-group">
+        <label for="duration">Duration (Minutes)</label>
+        <input type="number" class="form-control @error('duration') is-invalid @enderror" name="duration"
+            id="duration" min="0" value="{{ $model->exists ? $model->duration : '' }}">
+    </div>
+
 </form>
+
+<script src="{{ asset('adminlte/plugins/moment/moment.min.js') }}"></script>
+<script src="{{ asset('adminlte/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
+
 <script>
     $('.select2').select2();
+    //Datemask dd/mm/yyyy
+    $('#duration').inputmask({
+        "mask": "99:99",
+    })
+    //Datemask2 mm/dd/yyyy
+    $('#datemask2').inputmask('mm/dd/yyyy', {
+        'placeholder': 'mm/dd/yyyy'
+    })
+    //Money Euro
+    $('[data-mask]').inputmask()
 </script>

@@ -89,6 +89,7 @@
                                         <th style="vertical-align:middle;">Organisasi</th>
                                         <th style="vertical-align:middle;">Modul</th>
                                         <th style="vertical-align:middle;">Training</th>
+                                        <th style="vertical-align:middle;">Point</th>
                                         <th style="vertical-align:middle;">Selesai</th>
                                         <th style="vertical-align:middle;"></th>
                                     </tr>
@@ -152,7 +153,10 @@
                             data: 'training',
                             name: 't.title'
                         },
-
+                        {
+                            data: 'point',
+                            name: 'point'
+                        },
                         {
                             data: 'finished_at',
                             name: 'finished_at'
