@@ -59,10 +59,10 @@
 
 @push('scripts')
     <script>
-        $('.file').bind('contextmenu', function(e) {
-            return false;
-        });
         $(document).ready(function() {
+            $('.file').on('contextmenu', function(e) {
+                return false;
+            });
             $(function() {
                 $('#datatable').DataTable({
                     processing: true,

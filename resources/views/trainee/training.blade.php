@@ -79,7 +79,8 @@
                                     </div>
                                 @elseif($sub->type_file == 1)
                                     <div>
-                                        <embed src="{{ route('sub.view', ['file' => base64_encode($sub->file)]) }}"
+                                        <embed
+                                            src="{{ route('sub.view', ['file' => base64_encode($sub->file)]) }}#toolbar=0"
                                             type="application/pdf" frameBorder="0" scrolling="auto" height="500px"
                                             width="100%">
 
@@ -104,8 +105,10 @@
 
 @push('scripts')
     <script>
-        $('.file').bind('contextmenu', function(e) {
-            return false;
+        $(document).ready(function() {
+            $('.file').on('contextmenu', function(e) {
+                return false;
+            });
         });
     </script>
 @endpush
