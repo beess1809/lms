@@ -15,6 +15,7 @@
             <form action="{{ route('training.submitNilai') }}" method="post">
                 @csrf
                 <input type="hidden" name="training_id" value="{{ base64_encode($training_id) }}">
+                <input type="hidden" name="module_id" value="{{ base64_encode($module_id) }}">
                 <input type="hidden" name="uuid" value="{{ base64_encode($uuid) }}">
                 <input type="hidden" name="id" value="{{ base64_encode($id) }}">
                 <table id="datatable" class="table table-sm" style="width:100%">

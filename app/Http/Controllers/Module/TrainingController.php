@@ -379,7 +379,7 @@ class TrainingController extends Controller
                 }
                 $answer[] = [
                     'question_id' => $value->question->id,
-                    'answer_id' => $request->answer[$value->question->id],
+                    'answer_id' => $request->question[$value->question->id],
                     'score' => $score
                 ];
             } else {
@@ -441,8 +441,10 @@ class TrainingController extends Controller
     function submitNilai(Request $request)
     {
         $training_id = base64_decode($request->training_id);
+        $module_id = base64_decode($request->module_id);
         $id = base64_decode($request->id);
         $training = Training::find($training_id);
+        $module = Module::find($module_id);
 
 
         $answer = [];
@@ -463,16 +465,31 @@ class TrainingController extends Controller
             $point = 100;
         }
 
+        $traineeModule = TraineeModule::where('module_id',$module_id)->where('employee_uuid',Auth::user()->uuid)->first();
+        $last_point = $traineeModule->point;
+
         DB::beginTransaction();
         try {
             $model = TraineeTraining::find($id);
 
+            if(!isset($model->point)) {
+                $module_point = $last_point + ($point / $module->training->count());
+    
+                $traineModule_update = TraineeModule::find($traineeModule->id);
+                $traineModule_update->point = $module_point;
+                $traineModule_update->is_passed = ($module_point >= $module->passing_grade ? 1 : 0);
+                $traineModule_update->save();
+            }
+            
             $model->answer = json_encode($answer);
             $model->score = $point;
             $model->point = $point;
             $model->is_passed = ($model->score >= $training->passing_grade ? 1 : 0);
             $model->updated_by = Auth::user()->uuid;
             $model->save();
+
+            
+
 
             DB::commit();
             return redirect()->back()->with('alert.success', 'Submit nilai Berhasil');

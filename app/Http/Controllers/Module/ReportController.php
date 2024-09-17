@@ -32,6 +32,7 @@ class ReportController extends Controller
         $exp = explode('|', $id);
         $data['model'] = Training::find($exp[0]);
         $data['training_id'] = $exp[0];
+        $data['module_id'] = $data['model']->module_id;
         $data['uuid'] = $exp[1];
         $data['sub'] = new TrainingSub();
         $data['data'] = $data;

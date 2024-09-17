@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Master\Department;
 use App\Models\Module\Module;
 use App\Models\Module\Training;
+use App\Models\Trainee\TraineeModule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
@@ -39,8 +40,23 @@ class HomeController extends Controller
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('module', function ($model) {
-                $training = Training::rightJoin('trainee_trainings as tt', 'trainings.id', '=', 'tt.training_id')->where('module_id', $model->id)->where('tt.employee_uuid', Auth::user()->uuid)->get();
+                $training = Training::rightJoin('trainee_trainings as tt', 'trainings.id', '=', 'tt.training_id')
+                            ->where('module_id', $model->id)
+                            ->where('tt.employee_uuid', Auth::user()->uuid)->get();
                 $status = count($training) > 0 ? ((count($training) == $model->training->count()) ? 'Complete' : 'Process') : 'Not Started';
+                $module = TraineeModule::where('module_id', $model->id)->where('employee_uuid',Auth::user()->uuid)->first();
+                
+                if(!isset($module->point)) {
+                    $module_point = 0;
+                    $pass = '';
+                } else {
+                    $module_point = $module->point;
+                    if($module_point > $model->passing_grade) {
+                        $pass = '<span class="badge badge-success">Lulus</span>';
+                    } else {
+                        $pass = '<span class="badge badge-danger">Tidak Lulus</span>';
+                    }
+                }
                 $html = '
                 <div class="border-table">
                     <div class="row">
@@ -49,25 +65,48 @@ class HomeController extends Controller
                             ' . $model->title . '
                             </div>
                             <div class="row">
-                            <div class="list-training-content">
-                                <div class="icon">
-                                    <img src="' . asset("img/icon/toga.svg") . '" alt="">
+                                <div class="list-training-content">
+                                    <div class="icon">
+                                        <img src="' . asset("img/icon/toga.svg") . '" alt="">
+                                    </div>
+                                    <div class="detail">Total Training
+                                        <br>
+                                        <span>' . count($training) . '/' . $model->training->count() . '</span>
+                                    </div>
                                 </div>
-                                <div class="detail">Total Training
-                                    <br>
-                                    <span>' . count($training) . '/' . $model->training->count() . '</span>
+                                <div class="list-training-content">
+                                    <div class="icon">
+                                        <img src="' . asset("img/icon/toga.svg") . '" alt="">
+                                    </div>
+                                    <div class="detail">Mastery Score
+                                        <br>
+                                        <span>' . $model->passing_grade . '</span>
+                                    </div>
+                                </div>
+                                <div class="list-training-content">
+                                    <div class="icon">
+                                        <img src="' . asset("img/icon/thropy.svg") . '" alt="">
+                                    </div>
+                                    <div class="detail">Score
+                                        <br>
+                                        <span>'.$module_point.'</span>
+                                    </div>
+                                </div>
+                                <div class="list-training-content">
+                                    <div class="icon">
+                                        <img src="' . asset("img/icon/load.svg") . '" alt="">
+                                    </div>
+                                    <div class="detail">Status
+                                        <br>
+                                        <span>' . $status . '</span>
+                                    </div>
+                                </div>
+                                 <div class="list-training-content">
+                                    <div class="align-self-center">
+                                        ' . $pass . '
+                                    </div>
                                 </div>
                             </div>
-                            <div class="list-training-content">
-                                <div class="icon">
-                                    <img src="' . asset("img/icon/load.svg") . '" alt="">
-                                </div>
-                                <div class="detail">Status
-                                    <br>
-                                    <span>' . $status . '</span>
-                                </div>
-                            </div>
-                        </div>
                         </div>
                         <div class="col-sm-4" style="align-self:center">
                             <span class="border-table float-sm-right" style="width: fit-content !important;">
