@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
+use Carbon\Carbon;
+use DateTime;
 
 class TrainingController extends Controller
 {
@@ -66,6 +68,7 @@ class TrainingController extends Controller
             $model->parent_training = $request->parent;
             $model->description = $request->description;
             $model->passing_grade = $request->passing_grade;
+            $model->number_questions = $request->number_questions;
             $model->duration = $request->duration;
             $model->expired_at = $request->expired_at;
             $model->is_active = 0;
@@ -148,6 +151,7 @@ class TrainingController extends Controller
             $model->parent_training = $request->parent;
             $model->description = $request->description;
             $model->passing_grade = $request->passing_grade;
+            $model->number_questions = $request->number_questions;
             $model->duration = $request->duration;
             $model->expired_at = $request->expired_at;
             $model->is_active = 0;
@@ -255,7 +259,7 @@ class TrainingController extends Controller
 
     public function datatableTrainee(Request $request)
     {
-        $query = Training::where('module_id', $request->module_id);
+        $query = Training::where('module_id', $request->module_id)->where('type',1);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -267,15 +271,110 @@ class TrainingController extends Controller
                 }
                 $trainee = $model->traineeEmployee;
 
-                $button = $trainee ? '' : '<button type="button" class="btn btn-phintraco" onClick=clicked("' . route('trainee.training', ['id' => base64_encode($model->id)]) . '")>Mulai</button>';
-
                 if ($trainee) {
                     $pass =  !is_null($trainee->point) ? ($trainee->is_passed > 0 ? '<span class="badge badge-success">Lulus</span>' : '<span class="badge badge-danger">Tidak Lulus</span>') : '';
+                    
                     $status = !is_null($trainee->point) ? 'Selesai' : 'Dalam Penilaian';
+
+                    if (!isset($trainee->finished_at)) {
+                        $status = 'Belum Selesai';
+                        $button = '<button type="button" class="btn btn-phintraco" onClick=clicked("' . route('trainee.training', ['id' => base64_encode($model->id)]) . '")>Lanjutkan</button>';
+                    } else {
+                        $button = '';
+                    }
                     $score = $trainee->point;
                 } else {
                     $pass = "";
                     $status = "Belum Dikerjakan";
+                    $button = '<button type="button" class="btn btn-phintraco" onClick=clicked("' . route('trainee.training', ['id' => base64_encode($model->id)]) . '")>Mulai</button>';
+                    $score = "-";
+                }
+
+                $html = '
+                <div class="border-table">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="list-training-title">
+                            ' . $model->title . '
+                        </div>
+                        <div class="row">
+                            <div class="list-training-content">
+                                <div class="icon">
+                                    <img src="' . asset("img/icon/toga.svg") . '" alt="">
+                                </div>
+                                <div class="detail">Mastery Score
+                                    <br>
+                                    <span>' . $model->passing_grade . '</span>
+                                </div>
+                            </div>
+                            <div class="list-training-content">
+                                <div class="icon">
+                                    <img src="' . asset("img/icon/thropy.svg") . '" alt="">
+                                </div>
+                                <div class="detail">Score
+                                    <br>
+                                    <span>' . $score . '</span>
+                                </div>
+                            </div>
+                            <div class="list-training-content">
+                                <div class="icon">
+                                    <img src="' . asset("img/icon/load.svg") . '" alt="">
+                                </div>
+                                <div class="detail">Status
+                                    <br>
+                                    <span>' . $status . '</span>
+                                </div>
+                            </div>
+                            <div class="list-training-content">
+                                <div class="align-self-center">
+                                     ' . $pass . '
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 " style="align-self: center;">
+                        <div class="float-sm-right">
+                            ' . $button . '
+                        </div>
+                    </div>
+                </div>
+            </div>';
+                return $html;
+            })
+            ->rawColumns(['module'])
+            ->make(true);
+    }
+
+    public function datatableTraineeRemedial(Request $request)
+    {
+        $query = Training::where('module_id', $request->module_id)->where('type',2);
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('module', function ($model) {
+                if ($model->is_active == 1) {
+                    $checked = 'checked';
+                } else {
+                    $checked = '';
+                }
+                $trainee = $model->traineeEmployee;
+
+                if ($trainee) {
+                    $pass =  !is_null($trainee->point) ? ($trainee->is_passed > 0 ? '<span class="badge badge-success">Lulus</span>' : '<span class="badge badge-danger">Tidak Lulus</span>') : '';
+                    
+                    $status = !is_null($trainee->point) ? 'Selesai' : 'Dalam Penilaian';
+
+                    if (!isset($trainee->finished_at)) {
+                        $status = 'Belum Selesai';
+                        $button = '<button type="button" class="btn btn-phintraco" onClick=clicked("' . route('trainee.training', ['id' => base64_encode($model->id)]) . '")>Lanjutkan</button>';
+                    } else {
+                        $button = '';
+                    }
+                    $score = $trainee->point;
+                } else {
+                    $pass = "";
+                    $status = "Belum Dikerjakan";
+                    $button = '<button type="button" class="btn btn-phintraco" onClick=clicked("' . route('trainee.training', ['id' => base64_encode($model->id)]) . '")>Mulai</button>';
                     $score = "-";
                 }
 
@@ -341,6 +440,37 @@ class TrainingController extends Controller
         $data['training'] = TrainingSub::where('training_id', $id)->get();
         $parent = Training::find($data['model']->parent_training);
 
+        $now = date('Y-m-d H:i:s');
+
+        if (!$data['model']->traineeEmployee) {
+            $model = new TraineeTraining();
+            $model->training_id = $data['model']->id;
+            $model->started_at = $now;
+            $model->employee_uuid = Auth::user()->uuid;
+            // $model->finished_at = date('Y-m-d H:i:s');
+            $model->is_passed = 0;
+            $model->created_by = Auth::user()->uuid;
+            $model->save();
+
+        }
+        else {
+            $model = $data['model']->traineeEmployee;
+        }
+        $now = new DateTime();
+
+        $data['started_at'] = $model->started_at;
+        $start_at = Carbon::createFromFormat('Y-m-d H:i:s', $model->started_at);
+        $finish_at = $start_at->addMinutes($data['model']->duration)->format('Y-m-d H:i:s');
+        $finish = Carbon::createFromFormat('Y-m-d H:i:s', $finish_at);
+
+        $remain = $now->diff($finish);
+        
+        $remain_minutes = ($remain->days * 24 * 60) + ($remain->h * 60) + $remain->i;
+        $remain_seconds = $remain->s;
+
+        $data['remain_minutes'] = $remain_minutes;
+        $data['remain_seconds'] = $remain_seconds;
+        $data['finished_at'] = $finish_at;
         if ($parent) {
             if (isset($parent->traineeEmployee)) {
                 return view('trainee.training', $data);
@@ -348,7 +478,7 @@ class TrainingController extends Controller
                 return redirect()->back()->with('alert.failed', 'Please participate in the previous training');
             }
         } else {
-            if ($data['model']->traineeEmployee) {
+            if ($data['model']->traineeEmployee && isset($data['model']->traineeEmployee->finished_at)) {
                 return redirect()->back()->with('alert.failed', 'You`re already participate in this training');
             } else {
                 return view('trainee.training', $data);
@@ -363,43 +493,66 @@ class TrainingController extends Controller
         $sub = TrainingSub::where('training_id', $request->training_id)->where('training_type_id', 1)->get();
         $training = Training::find($request->training_id);
         $module = Module::find($training->module_id);
-        $count = $module->training->count();
+        // $count = $module->training->count();
+        $count = $training->number_questions;
 
-        $sum = count($sub);
+        $trainee = $training->traineeEmployee;
+
+        $sum = $count;
         $answer = [];
+
+        $question_random = [];
         foreach ($sub as $key => $value) {
             if (array_key_exists($value->question->id, $request->question)) {
+                $question_random['question_id'][] = $value->question->id;
+                $question_random['answer_id'][] = $value->question->answer_id;
+            }
 
-                if ($request->question[$value->question->id] == $request->answer[$value->question->id]) {
-                    $true += 1;
-                    $score = 100;
-                } else {
-                    $false += 1;
-                    $score = 0;
-                }
-                $answer[] = [
-                    'question_id' => $value->question->id,
-                    'answer_id' => $request->question[$value->question->id],
-                    'score' => $score
-                ];
+            // if (array_key_exists($value->question->id, $request->question)) {
+
+            //     if ($request->question[$value->question->id] == $request->answer[$value->question->id]) {
+            //         $true += 1;
+            //         $score = 100;
+            //     } else {
+            //         $false += 1;
+            //         $score = 0;
+            //     }
+            //     $answer[] = [
+            //         'question_id' => $value->question->id,
+            //         'answer_id' => $request->question[$value->question->id],
+            //         'score' => $score
+            //     ];
+            // } else {
+            //     $false += 1;
+            // }
+        }
+
+        foreach($question_random['question_id'] as $key => $question) {
+            if($request->question[$question_random['question_id'][$key]] == $request->answer[$question_random['question_id'][$key]]) {
+                $true += 1;
+                $score = 100;
             } else {
                 $false += 1;
+                $score = 0;
             }
+            $answer[] = [
+                'question_id' => $question_random['question_id'][$key],
+                'answer_id' => $request->question[$question_random['question_id'][$key]],
+                'score' => $score
+            ];
         }
+
         $score = $sum > 0 ? ($true / $sum) * 100 : 100;
         DB::beginTransaction();
         try {
-            $model = new TraineeTraining();
-            $model->training_id = $request->training_id;
-            $model->employee_uuid = Auth::user()->uuid;
+            $model = TraineeTraining::find($trainee->id);
             $model->correct = $true;
             $model->wrong = $false;
             $model->answer = json_encode($answer);
             $model->score = $score;
-            $model->created_at = $request->created_at;
             $model->finished_at = date('Y-m-d H:i:s');
             $model->is_passed = ($model->score >= $training->passing_grade ? 1 : 0);
-            $model->created_by = Auth::user()->uuid;
+            $model->updated_by = Auth::user()->uuid;
 
 
 
@@ -428,6 +581,7 @@ class TrainingController extends Controller
             Log::error($e);
             return redirect()->route('trainee.module', ['id' => $request->module_id])->with('alert.failed', 'Sorry, Please Try Again');
         }
+        
     }
 
     public function getTrainings(Request $request)

@@ -40,7 +40,22 @@
     <div class="form-group">
         <label for="passing_grade">Passing Grade</label>
         <input type="number" class="form-control @error('passing_grade') is-invalid @enderror" name="passing_grade"
-            id="passing_grade" placeholder="Passing Grade" value="{{ $model->exists ? $model->passing_grade : '' }}">
+            id="passing_grade" min="0" placeholder="Passing Grade"
+            value="{{ $model->exists ? $model->passing_grade : '' }}">
+    </div>
+
+    <div class="form-group">
+        <label for="duration">Duration (Minutes)</label>
+        <input type="number" class="form-control @error('duration') is-invalid @enderror" name="duration"
+            id="duration" min="0" value="{{ $model->exists ? $model->duration : '' }}"
+            placeholder="Duration (Minutes)">
+    </div>
+
+    <div class="form-group">
+        <label for="number_questions">Number of Questions</label>
+        <input type="number" class="form-control @error('number_questions') is-invalid @enderror"
+            name="number_questions" id="number_questions" min="0"
+            value="{{ $model->exists ? $model->number_questions : '' }}" placeholder="Number of Questions">
     </div>
 
     <div class="form-group">
@@ -49,11 +64,6 @@
             id="expired_at" value="{{ $model->exists ? $model->expired_at : '' }}">
     </div>
 
-    <div class="form-group">
-        <label for="duration">Duration (Minutes)</label>
-        <input type="number" class="form-control @error('duration') is-invalid @enderror" name="duration"
-            id="duration" min="0" value="{{ $model->exists ? $model->duration : '' }}">
-    </div>
 
 </form>
 

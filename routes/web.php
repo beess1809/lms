@@ -49,6 +49,7 @@ Route::middleware('auth:employee')->group(function () {
         Route::post('/is-active', [TrainingController::class, 'isActive'])->name('isActive');
         Route::get('/dataTables/{module_id}', [TrainingController::class, 'datatables'])->name('dataTables');
         Route::post('trainee/dataTables', [TrainingController::class, 'datatableTrainee'])->name('datatableTrainee');
+        Route::post('trainee/dataTables2', [TrainingController::class, 'datatableTraineeRemedial'])->name('datatableTraineeRemedial');
         Route::resource('', TrainingController::class, ['parameters' => ['' => 'id']])->except([
             'index',
             'create',

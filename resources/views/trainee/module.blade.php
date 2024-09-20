@@ -22,15 +22,31 @@
             </div>
         </div>
         <div class="col-md-8">
-            <table id="datatable" class="table table-sm" style="width:100%">
-                <thead>
-                    <tr>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div class="card">
+                <div class="card-body">
+                    <h5>Reguler</h5>
+                    <table id="datatable" class="table table-sm" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <h5>Remedial</h5>
+                    <table id="datatable2" class="table table-sm" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
         </div>
 
     </div>
@@ -50,6 +66,31 @@
                     pageLength: 20,
                     ajax: {
                         url: "{!! route('training.datatableTrainee') !!}",
+                        type: 'post',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: function(d) {
+                            return $.extend({}, d, {
+                                module_id: {{ $model->id }}
+                            })
+                        },
+                    },
+                    columns: [{
+                        data: 'module',
+                        name: 'module'
+                    }, ]
+                });
+
+                $('#datatable2').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    searching: false,
+                    lengthChange: false,
+                    info: false,
+                    pageLength: 20,
+                    ajax: {
+                        url: "{!! route('training.datatableTraineeRemedial') !!}",
                         type: 'post',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

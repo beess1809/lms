@@ -4,6 +4,10 @@
     <div class="content-header-background">
         <div class="center-content">
             <h2>{{ $model->title }}</h2>
+            <h5>Started At : {{ sqlindo_datetime_to_datetime($started_at) }}</h5>
+            <h5>Duration : {{ $model->duration . ' minutes' }}</h5>
+            <h5>Remain : <span id="countdown">{{ $remain_minutes . ':' . $remain_seconds }}</span>
+            </h5>
         </div>
     </div>
 @endsection
@@ -26,7 +30,7 @@
                 <input type="hidden" name="training_id" value="{{ $model->id }}">
                 <input type="hidden" name="module_id" value="{{ base64_encode($model->module_id) }}">
                 <input type="hidden" name="created_at" value="{{ date('Y-m-d H:i:s') }}">
-                @foreach ($training->shuffle() as $key => $sub)
+                @foreach ($training->shuffle()->shift($model->number_questions) as $key => $sub)
                     @if ($sub->training_type_id == 1)
                         @if ($sub->type_answer == 1)
                             <div class="card">
@@ -94,7 +98,7 @@
                 @endforeach
                 <hr>
                 <div>
-                    <button type="submit" class="btn btn-phintraco float-right">Submit</button>
+                    <button type="submit" id="submitTraining" class="btn btn-phintraco float-right">Submit</button>
                 </div>
             </form>
         </div>
@@ -110,5 +114,35 @@
                 return false;
             });
         });
+    </script>
+
+    <script>
+        let totalTime = {{ $remain_minutes * 60 + $remain_seconds }}; // 60 menit dalam detik
+        let countdownDisplay = document.getElementById('countdown');
+        let submitTraining = document.getElementById("submitTraining");
+
+        function startCountdown() {
+            let interval = setInterval(function() {
+                let minutes = Math.floor(totalTime / 60);
+                let seconds = totalTime % 60;
+
+                // Tambahkan nol di depan angka di bawah 10
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+
+                countdownDisplay.textContent = minutes + ':' + seconds;
+
+                // Kurangi total waktu, hentikan saat mencapai 0
+                totalTime--;
+                if (totalTime < 0) {
+                    clearInterval(interval);
+                    countdownDisplay.textContent = "Waktu Habis!";
+                    submitTraining.click();
+                }
+            }, 1000); // Update setiap 1 detik
+        }
+
+        // Mulai hitung mundur saat halaman dimuat
+        window.onload = startCountdown;
     </script>
 @endpush

@@ -146,12 +146,29 @@ class ReportController extends Controller
 
     public function detailDataTables($id)
     {
-        $id = base64_decode($id);
+        $id = base64_decode($id); // [id training | uuid]
         $exp = explode('|', $id);
         $trainee = $exp[1];
-        $query = TrainingSub::where('training_id', $exp[0]);
+        $query = TrainingSub::where('training_id', $exp[0])->get();
         $trainee_answer = TraineeTraining::where('training_id', $exp[0])->where('employee_uuid', $trainee)->first();
         $answer = json_decode($trainee_answer->answer);
+
+        $details = [];
+
+        foreach($query as $key => $value) {
+            foreach ($answer as $key2 => $value2) {
+                if($value->question->id == $value2->question_id) {
+                    $details[] = array(
+                        'sub' => $value,
+                        'training_id' => $exp[0],
+                        'type_answer' => $value->type_answer,
+                        'answer_id' => $value2->answer_id,
+                        'score' => $value2->score
+                    );
+                }
+            }
+        }
+
 
         $question_answer = [];
         $score_answer = [];
@@ -159,16 +176,19 @@ class ReportController extends Controller
             $question_answer[$answer[$key]->question_id] = $answer[$key]->answer_id;
             $score_answer[$answer[$key]->question_id] = $answer[$key]->score;
         }
-        return DataTables::of($query)
+
+        return DataTables::of($details)
             ->addIndexColumn()
             ->addColumn('module', function ($model) use ($question_answer, $score_answer) {
                 $data['sub'] = $model;
-                $data['training_id'] = $model->training_id;
+                $data['training_id'] = $model['training_id'];
                 $data['question_answer'] = $question_answer;
                 $data['score_answer'] = $score_answer;
                 // return $trainee_answer->answer;
                 return view('report.detail', $data);
             })
+
+           
             ->rawColumns(['module'])
             ->make(true);
     }
