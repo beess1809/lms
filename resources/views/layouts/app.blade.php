@@ -105,16 +105,20 @@
                     <ul class="navbar-nav nav-center">
                         <li class="nav-item">
                             <a href="{{ route('dashboard') }}"
-                                class="nav-link @if ($segments[0] == 'dashboard') active @endif">Beranda</a>
+                                class="nav-link @if ($segments[0] == 'dashboard') active @endif">Dashboard</a>
                         </li>
                         @if (session('trainer') == 1)
                             <li class="nav-item">
                                 <a href="{{ route('module.home', ['tab_id' => 'mandatory']) }}"
-                                    class="nav-link @if ($segments[0] == 'module' || $segments[0] == 'training') active @endif">Modul</a>
+                                    class="nav-link @if ($segments[0] == 'module' || $segments[0] == 'training') active @endif">Module</a>
                             </li>
                             <li class="nav-item">
                                 <a href="{{ route('report.index') }}"
-                                    class="nav-link @if ($segments[0] == 'report') active @endif">Riwayat</a>
+                                    class="nav-link @if ($segments[0] == 'report' && !isset($segments[1])) active @endif">Scoring</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('report.employee.index') }}"
+                                    class="nav-link @if ($segments[0] == 'report' && isset($segments[1])) active @endif">Report</a>
                             </li>
                         @endif
                     </ul>

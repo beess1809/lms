@@ -35,23 +35,29 @@ class HomeController extends Controller
     public function datatables(Request $request)
     {
 
-        $query = Module::where('is_active', 1)->where('expired_at', '>', date('Y-m-d'))->orWhereNull('expired_at');
+        $query = Module::where('is_active', 1)->where(function ($query) {
+            $query->where('expired_at', '>=', date('Y-m-d'));
+            $query->orWhereNull('expired_at');
+        });
 
         return DataTables::of($query)
             ->addIndexColumn()
             ->addColumn('module', function ($model) {
                 $training = Training::rightJoin('trainee_trainings as tt', 'trainings.id', '=', 'tt.training_id')
-                            ->where('module_id', $model->id)
-                            ->where('tt.employee_uuid', Auth::user()->uuid)->get();
-                $status = count($training) > 0 ? ((count($training) == $model->training->count()) ? 'Complete' : 'Process') : 'Not Started';
-                $module = TraineeModule::where('module_id', $model->id)->where('employee_uuid',Auth::user()->uuid)->first();
-                
-                if(!isset($module->point)) {
+                    ->where('module_id', $model->id)
+                    ->where('tt.employee_uuid', Auth::user()->uuid)->get();
+                $totalTraining = Training::where('type', 1)
+                    ->where('module_id', $model->id)
+                    ->count();
+                $status = count($training) > 0 ? ((count($training) == $totalTraining) ? 'Complete' : 'Process') : 'Not Started';
+                $module = TraineeModule::where('module_id', $model->id)->where('employee_uuid', Auth::user()->uuid)->first();
+
+                if (!isset($module->point)) {
                     $module_point = 0;
                     $pass = '';
                 } else {
                     $module_point = $module->point;
-                    if($module_point > $model->passing_grade) {
+                    if ($module_point > $model->passing_grade) {
                         $pass = '<span class="badge badge-success">Lulus</span>';
                     } else {
                         $pass = '<span class="badge badge-danger">Tidak Lulus</span>';
@@ -71,7 +77,7 @@ class HomeController extends Controller
                                     </div>
                                     <div class="detail">Total Training
                                         <br>
-                                        <span>' . count($training) . '/' . $model->training->count() . '</span>
+                                        <span>' . count($training) . '/' . $totalTraining . '</span>
                                     </div>
                                 </div>
                                 <div class="list-training-content">
@@ -89,7 +95,7 @@ class HomeController extends Controller
                                     </div>
                                     <div class="detail">Score
                                         <br>
-                                        <span>'.$module_point.'</span>
+                                        <span>' . $module_point . '</span>
                                     </div>
                                 </div>
                                 <div class="list-training-content">

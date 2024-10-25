@@ -37,10 +37,23 @@
         </div>
     </div>
 @else
-    {{-- <div class="row justify-content-center">
-        <div class="col-md-12" style="display: inline-flex;justify-content: center;">
-            <iframe src="{{ route('sub.view', ['file' => base64_encode($sub->file)]) }}" frameBorder="10"
-                scrolling="auto" height="900px" width="100%"></iframe>
+    <div class="row justify-content-center ">
+        <div class="col-md-12 mb-3" style="display: initial;justify-content: center;">
+            @if ($sub['sub']->type_file == 3)
+                <div class="file">
+                    <video controls width="100%" height="500px" controlsList="nodownload">
+                        <source src="{{ route('sub.view', ['file' => base64_encode($sub['sub']->file)]) }}"
+                            type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            @elseif($sub['sub']->type_file == 1)
+                <div>
+                    <embed src="{{ route('sub.view', ['file' => base64_encode($sub['sub']->file)]) }}#toolbar=0"
+                        type="application/pdf" frameBorder="0" scrolling="auto" height="500px" width="100%">
+
+                </div>
+            @endif
         </div>
-    </div> --}}
+    </div>
 @endif

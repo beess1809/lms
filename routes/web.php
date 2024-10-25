@@ -75,6 +75,15 @@ Route::middleware('auth:employee')->group(function () {
         Route::post('/datatables', [ReportController::class, 'datatables'])->name('datatables');
         Route::get('/detailDatatables/{id}', [ReportController::class, 'detailDatatables'])->name('detailDatatables');
         Route::get('/detail/{id}', [ReportController::class, 'detail'])->name('detail');
+        Route::name('employee.')->prefix('employee')->group(function () {
+            Route::get('/', [ReportController::class, 'employee'])->name('index');
+            Route::post('/datatables', [ReportController::class, 'datatablesEmployees'])->name('datatablesEmployees');
+            Route::post('/datatablesEmployeeModules', [ReportController::class, 'datatablesEmployeeModules'])->name('datatablesEmployeeModules');
+            Route::get('/modul/{id}', [ReportController::class, 'employeeModul'])->name('modul');
+            Route::post('/datatablesEmployeeTrainings', [ReportController::class, 'datatablesEmployeeTrainings'])->name('datatablesEmployeeTrainings');
+            Route::get('/training-detail/{id}', [ReportController::class, 'trainingDetail'])->name('trainingDetail');
+            Route::get('/training/{id}', [ReportController::class, 'employeeTraining'])->name('training');
+        });
         Route::resource('', ReportController::class, ['parameters' => ['' => 'id']]);
     });
 });

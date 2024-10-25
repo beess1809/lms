@@ -25,4 +25,8 @@ class Training extends Model
     {
         return $this->hasOne(TraineeTraining::class, 'training_id', 'id')->where('employee_uuid', Auth::user()->uuid);
     }
+    public function module()
+    {
+        return $this->hasOne(Module::class, 'id', 'module_id');
+    }
 }

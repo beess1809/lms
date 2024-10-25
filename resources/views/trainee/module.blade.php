@@ -34,16 +34,19 @@
                         <tbody>
                         </tbody>
                     </table>
-                    <h5>Remedial</h5>
-                    <table id="datatable2" class="table table-sm" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
+                    @if ($model->finishTraining == $model->count && $model->point < $model->passing_grade)
+                        <h5>Remedial</h5>
+                        <table id="datatable2" class="table table-sm" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    @endif
+
                 </div>
             </div>
 
@@ -64,6 +67,7 @@
                     lengthChange: false,
                     info: false,
                     pageLength: 20,
+                    ordering: false,
                     ajax: {
                         url: "{!! route('training.datatableTrainee') !!}",
                         type: 'post',
@@ -89,6 +93,7 @@
                     lengthChange: false,
                     info: false,
                     pageLength: 20,
+                    ordering: false,
                     ajax: {
                         url: "{!! route('training.datatableTraineeRemedial') !!}",
                         type: 'post',

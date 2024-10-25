@@ -259,7 +259,7 @@ class TrainingController extends Controller
 
     public function datatableTrainee(Request $request)
     {
-        $query = Training::where('module_id', $request->module_id)->where('type',1);
+        $query = Training::where('module_id', $request->module_id)->where('type', 1);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -273,7 +273,7 @@ class TrainingController extends Controller
 
                 if ($trainee) {
                     $pass =  !is_null($trainee->point) ? ($trainee->is_passed > 0 ? '<span class="badge badge-success">Lulus</span>' : '<span class="badge badge-danger">Tidak Lulus</span>') : '';
-                    
+
                     $status = !is_null($trainee->point) ? 'Selesai' : 'Dalam Penilaian';
 
                     if (!isset($trainee->finished_at)) {
@@ -347,7 +347,7 @@ class TrainingController extends Controller
 
     public function datatableTraineeRemedial(Request $request)
     {
-        $query = Training::where('module_id', $request->module_id)->where('type',2);
+        $query = Training::where('module_id', $request->module_id)->where('type', 2);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -361,7 +361,7 @@ class TrainingController extends Controller
 
                 if ($trainee) {
                     $pass =  !is_null($trainee->point) ? ($trainee->is_passed > 0 ? '<span class="badge badge-success">Lulus</span>' : '<span class="badge badge-danger">Tidak Lulus</span>') : '';
-                    
+
                     $status = !is_null($trainee->point) ? 'Selesai' : 'Dalam Penilaian';
 
                     if (!isset($trainee->finished_at)) {
@@ -437,7 +437,8 @@ class TrainingController extends Controller
     {
         $id = base64_decode($id);
         $data['model'] = Training::find($id);
-        $data['training'] = TrainingSub::where('training_id', $id)->get();
+        $max_question = $data['model']->number_questions < 2 ?  2 : $data['model']->number_questions;
+        $data['training'] = TrainingSub::where('training_id', $id)->get()->shuffle()->shift($max_question);
         $parent = Training::find($data['model']->parent_training);
 
         $now = date('Y-m-d H:i:s');
@@ -451,9 +452,7 @@ class TrainingController extends Controller
             $model->is_passed = 0;
             $model->created_by = Auth::user()->uuid;
             $model->save();
-
-        }
-        else {
+        } else {
             $model = $data['model']->traineeEmployee;
         }
         $now = new DateTime();
@@ -464,7 +463,7 @@ class TrainingController extends Controller
         $finish = Carbon::createFromFormat('Y-m-d H:i:s', $finish_at);
 
         $remain = $now->diff($finish);
-        
+
         $remain_minutes = ($remain->days * 24 * 60) + ($remain->h * 60) + $remain->i;
         $remain_seconds = $remain->s;
 
@@ -527,19 +526,21 @@ class TrainingController extends Controller
             // }
         }
 
-        foreach($question_random['question_id'] as $key => $question) {
-            if($request->question[$question_random['question_id'][$key]] == $request->answer[$question_random['question_id'][$key]]) {
-                $true += 1;
-                $score = 100;
-            } else {
-                $false += 1;
-                $score = 0;
+        if ($question_random) {
+            foreach ($question_random['question_id'] as $key => $question) {
+                if ($request->question[$question_random['question_id'][$key]] == $request->answer[$question_random['question_id'][$key]]) {
+                    $true += 1;
+                    $score = 100;
+                } else {
+                    $false += 1;
+                    $score = 0;
+                }
+                $answer[] = [
+                    'question_id' => $question_random['question_id'][$key],
+                    'answer_id' => $request->answer[$question_random['question_id'][$key]],
+                    'score' => $score
+                ];
             }
-            $answer[] = [
-                'question_id' => $question_random['question_id'][$key],
-                'answer_id' => $request->question[$question_random['question_id'][$key]],
-                'score' => $score
-            ];
         }
 
         $score = $sum > 0 ? ($true / $sum) * 100 : 100;
@@ -581,7 +582,6 @@ class TrainingController extends Controller
             Log::error($e);
             return redirect()->route('trainee.module', ['id' => $request->module_id])->with('alert.failed', 'Sorry, Please Try Again');
         }
-        
     }
 
     public function getTrainings(Request $request)
@@ -599,8 +599,7 @@ class TrainingController extends Controller
         $id = base64_decode($request->id);
         $training = Training::find($training_id);
         $module = Module::find($module_id);
-
-
+        $uuid = base64_decode($request->uuid);
         $answer = [];
         $total = 0;
 
@@ -619,22 +618,27 @@ class TrainingController extends Controller
             $point = 100;
         }
 
-        $traineeModule = TraineeModule::where('module_id',$module_id)->where('employee_uuid',Auth::user()->uuid)->first();
-        $last_point = $traineeModule->point;
+        $traineeModule = TraineeModule::where('module_id', $module_id)->where('employee_uuid', $uuid)->first();
+        $last_point = $traineeModule ? $traineeModule->point : 0;
 
         DB::beginTransaction();
         try {
             $model = TraineeTraining::find($id);
 
-            if(!isset($model->point)) {
-                $module_point = $last_point + ($point / $module->training->count());
-    
-                $traineModule_update = TraineeModule::find($traineeModule->id);
-                $traineModule_update->point = $module_point;
-                $traineModule_update->is_passed = ($module_point >= $module->passing_grade ? 1 : 0);
-                $traineModule_update->save();
+            if ($training->type == 1) {
+                if (!isset($model->point)) {
+                    $module_point = ($last_point + $point) / $module->training->count();
+                    if ($traineeModule) {
+                        $traineModule_update = TraineeModule::find($traineeModule->id);
+                    } else {
+                        $traineModule_update = new TraineeModule();
+                        $traineModule_update->employee_uuid = $uuid;
+                    }
+                    $traineModule_update->point = $module_point;
+                    $traineModule_update->is_passed = ($module_point >= $module->passing_grade ? 1 : 0);
+                    $traineModule_update->save();
+                }
             }
-            
             $model->answer = json_encode($answer);
             $model->score = $point;
             $model->point = $point;
@@ -642,7 +646,7 @@ class TrainingController extends Controller
             $model->updated_by = Auth::user()->uuid;
             $model->save();
 
-            
+
 
 
             DB::commit();
@@ -650,6 +654,7 @@ class TrainingController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             Log::error($e);
+            dd($e);
             return redirect()->back()->with('alert.failed', 'Maaf Terjadi Kesalahan, Silahkan Coba Lagi');
         }
     }

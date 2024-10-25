@@ -108,6 +108,6 @@ class LoginController extends Controller
     }
     public function redirect()
     {
-        return Redirect::to(env('PHINTER'));
+        return Redirect::to(config('app.phinter_url'));
     }
 }

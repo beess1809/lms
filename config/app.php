@@ -233,4 +233,6 @@ return [
 
     ],
 
+    'phinter_url' => env('PHINTER'),
+
 ];

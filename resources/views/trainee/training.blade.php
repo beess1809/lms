@@ -30,7 +30,7 @@
                 <input type="hidden" name="training_id" value="{{ $model->id }}">
                 <input type="hidden" name="module_id" value="{{ base64_encode($model->module_id) }}">
                 <input type="hidden" name="created_at" value="{{ date('Y-m-d H:i:s') }}">
-                @foreach ($training->shuffle()->shift($model->number_questions) as $key => $sub)
+                @foreach ($training as $key => $sub)
                     @if ($sub->training_type_id == 1)
                         @if ($sub->type_answer == 1)
                             <div class="card">
@@ -90,8 +90,6 @@
 
                                     </div>
                                 @endif
-
-
                             </div>
                         </div>
                     @endif
