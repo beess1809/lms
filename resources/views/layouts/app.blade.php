@@ -116,9 +116,24 @@
                                 <a href="{{ route('report.index') }}"
                                     class="nav-link @if ($segments[0] == 'report' && !isset($segments[1])) active @endif">Scoring</a>
                             </li>
-                            <li class="nav-item">
-                                <a href="{{ route('report.employee.index') }}"
-                                    class="nav-link @if ($segments[0] == 'report' && isset($segments[1])) active @endif">Report</a>
+
+                            <li class="nav-item dropdown">
+                                <a id="navbarDropdown"
+                                    class="nav-link dropdown-toggle  @if ($segments[0] == 'report' && isset($segments[1])) active @endif"
+                                    href="#" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false" v-pre="">Report<span class="caret"></span>
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('report.employee.index') }}">
+                                            Employee
+                                        </a>
+                                        <a class="dropdown-item" href="{{ route('report.training.index') }}">
+                                            Training
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         @endif
                     </ul>
@@ -127,21 +142,6 @@
                 <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
 
 
-                    {{-- <li class="nav-item dropdown">
-                        <a class="nav-link" data-toggle="dropdown" href="#">
-                            <i class="far fa-bell"></i>
-                            <span class="badge badge-warning navbar-badge">15</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                            <span class="dropdown-header">15 Notifications</span>
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item">
-                                <i class="fas fa-envelope mr-2"></i> 4 new messages
-                                <span class="float-right text-muted text-sm">3 mins</span>
-                            </a>
-                            <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-                        </div>
-                    </li> --}}
                     <li class="nav-item dropdown">
                         <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre="">

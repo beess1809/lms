@@ -80,10 +80,19 @@ Route::middleware('auth:employee')->group(function () {
             Route::post('/datatables', [ReportController::class, 'datatablesEmployees'])->name('datatablesEmployees');
             Route::post('/datatablesEmployeeModules', [ReportController::class, 'datatablesEmployeeModules'])->name('datatablesEmployeeModules');
             Route::get('/modul/{id}', [ReportController::class, 'employeeModul'])->name('modul');
+            Route::get('/employeeModulPdf/{id}', [ReportController::class, 'employeeModulPdf'])->name('employeeModulPdf');
             Route::post('/datatablesEmployeeTrainings', [ReportController::class, 'datatablesEmployeeTrainings'])->name('datatablesEmployeeTrainings');
             Route::get('/training-detail/{id}', [ReportController::class, 'trainingDetail'])->name('trainingDetail');
+            Route::get('/employeeTrainingPdf/{id}', [ReportController::class, 'employeeTrainingPdf'])->name('employeeTrainingPdf');
+            Route::get('/trainingPdf/{id}', [ReportController::class, 'trainingPdf'])->name('trainingPdf');
             Route::get('/training/{id}', [ReportController::class, 'employeeTraining'])->name('training');
         });
+
+        Route::name('training.')->prefix('training')->group(function () {
+            Route::get('/', [ReportController::class, 'training'])->name('index');
+            Route::post('/datatableTrainings', [ReportController::class, 'datatableTrainings'])->name('datatableTrainings');
+        });
+
         Route::resource('', ReportController::class, ['parameters' => ['' => 'id']]);
     });
 });

@@ -45,6 +45,7 @@ class HomeController extends Controller
             ->addColumn('module', function ($model) {
                 $training = Training::rightJoin('trainee_trainings as tt', 'trainings.id', '=', 'tt.training_id')
                     ->where('module_id', $model->id)
+                    ->where('type', 1)
                     ->where('tt.employee_uuid', Auth::user()->uuid)->get();
                 $totalTraining = Training::where('type', 1)
                     ->where('module_id', $model->id)

@@ -12,6 +12,7 @@ use App\Models\Module\Training;
 use App\Models\Module\TrainingSub;
 use App\Models\Trainee\TraineeModule;
 use App\Models\Trainee\TraineeTraining;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
@@ -240,6 +241,18 @@ class ReportController extends Controller
         return view('report.employee.modul', $data);
     }
 
+    public function employeeModulPdf($id)
+    {
+        $data['model'] = Employee::find(base64_decode($id));
+        $data['modules'] =  TraineeModule::join('modules as m', 'trainee_modules.module_id', '=', 'm.id')
+            ->where('employee_uuid', base64_decode($id))
+            ->select('m.*', 'trainee_modules.point', 'trainee_modules.is_passed', 'trainee_modules.point', 'trainee_modules.employee_uuid', 'trainee_modules.id as trainee_module_id')
+            ->get();
+        $pdf = Pdf::loadView('report.employee.export.modul', $data);
+        return $pdf->download('Report Module - ' . $data['model']->name);
+        // return view('report.employee.export.modul', $data);
+    }
+
     public function datatablesEmployeeModules(Request $request)
     {
         $uuid = base64_decode($request->employee_uuid);
@@ -270,6 +283,23 @@ class ReportController extends Controller
         return view('report.employee.training', $data);
     }
 
+    public function employeeTrainingPdf($id)
+    {
+        $id = base64_decode($id); // [id training | uuid]
+        $exp = explode('|', $id);
+
+        $data['model'] = Employee::find($exp[0]);
+        $data['module'] = TraineeModule::find($exp[1]);
+        $data['trainings'] =  TraineeTraining::join('trainings as t', 'trainee_trainings.training_id', '=', 't.id')
+            ->where('employee_uuid', $exp[0])
+            ->where('t.module_id',  $data['module']->module_id)
+            ->select('t.*', 'trainee_trainings.point', 'trainee_trainings.is_passed', 'trainee_trainings.id as trainee_training_id')
+            ->get();
+
+        $pdf = Pdf::loadView('report.employee.export.training', $data);
+        return $pdf->download('Report Training - ' . $data['model']->name);
+        // return view('report.employee.export.training', $data);
+    }
     public function datatablesEmployeeTrainings(Request $request)
     {
         $uuid = base64_decode($request->employee_uuid);
@@ -315,5 +345,81 @@ class ReportController extends Controller
 
 
         return view('report.employee.detail-training', ['model' => $detail, 'answers' => $traineeAnswers]);
+    }
+
+    public function trainingPdf($id)
+    {
+        $detail = TraineeTraining::find(base64_decode($id));
+
+        $answers = json_decode($detail->answer);
+        $traineeAnswers = [];
+
+        foreach ($answers as $key => $value) {
+            $question = Question::find($value->question_id);
+            $answer = Answer::find($value->answer_id);
+
+            $traineeAnswers[$key] = [
+                'question' => $question->question,
+                'answer' => ($answer ? $answer->answer : $value->answer_id),
+                'no' => $key + 1,
+                'score' => $value->score
+            ];
+        }
+
+        $pdf = Pdf::loadView('report.employee.export.detail-training', ['model' => $detail, 'answers' => $traineeAnswers]);
+        return $pdf->download('Report ' . $detail->training->module->title . ' - ' . $detail->training->title . ' - ' . $detail->trainee->name);
+        // return view('report.employee.export.detail-training', ['model' => $detail, 'answers' => $traineeAnswers]);
+    }
+
+
+    public function training()
+    {
+        $data['companies'] = Company::all();
+        return view('report.training.index', $data);
+    }
+
+
+    public function datatableTrainings(Request $request)
+    {
+        $query = TraineeTraining::join('PECDB.employees as e', 'e.uuid', 'trainee_trainings.employee_uuid')
+            ->join('trainings as t', 't.id', 'trainee_trainings.training_id')
+            ->join('modules as m', 't.module_id', 'm.id')
+            ->join('PECDB.companies as c', 'e.company_id', 'c.id')
+            ->join('PECDB.departments as d', 'e.department_code', 'd.code')
+            ->select('trainee_trainings.id', 'trainee_trainings.point', 'e.uuid as uuid', 'e.name as trainee', 'e.empl_id as trainee_nip', 'trainee_trainings.score', 'is_passed', 'finished_at', 'c.name as company', 'd.name as organization', 'm.title as module', 't.title as training', 't.id as training_id')
+            ->orderBy('finished_at', 'desc');
+
+        if ($request->company) {
+            $query->where('e.company_id', $request->company);
+        }
+
+        if ($request->department) {
+            $query->where('e.department_code', $request->department);
+        }
+
+        if ($request->module) {
+            $query->where('m.id', $request->module);
+        }
+
+        if ($request->training) {
+            $query->where('t.id', $request->training);
+        }
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('action', function ($model) {
+                $string = '<a href="' . route('report.employee.trainingDetail', ['id' => base64_encode($model->id)]) . '" type="button" class="btn btn-outline-phintraco">Detail</button';
+                return $string;
+            })
+            ->addColumn('result', function ($model) {
+                if ($model->is_passed == 1) {
+                    $pass = '<span class="badge badge-success">Passed</span>';
+                } else {
+                    $pass = '<span class="badge badge-danger">Not Passed</span>';
+                }
+                return $pass;
+            })
+            ->rawColumns(['action', 'result'])
+            ->make(true);
     }
 }

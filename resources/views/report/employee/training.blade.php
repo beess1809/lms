@@ -6,6 +6,10 @@
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title"><b>Detail Training Employee</b></h5>
+                    <span class="float-right"><a
+                            href="{{ route('report.employee.employeeTrainingPdf', ['id' => base64_encode($model->uuid . '|' . $module->id)]) }}"
+                            class="btn btn-danger"><i class="fas fa-file-pdf"></i> Download
+                            Pdf</a></span>
                 </div>
                 <div class="card-body">
                     <div class="row">
