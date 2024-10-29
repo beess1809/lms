@@ -249,7 +249,7 @@ class ReportController extends Controller
             ->select('m.*', 'trainee_modules.point', 'trainee_modules.is_passed', 'trainee_modules.point', 'trainee_modules.employee_uuid', 'trainee_modules.id as trainee_module_id')
             ->get();
         $pdf = Pdf::loadView('report.employee.export.modul', $data);
-        return $pdf->download('Report Module - ' . $data['model']->name);
+        return $pdf->download('Report Module - ' . $data['model']->name . '.pdf');
         // return view('report.employee.export.modul', $data);
     }
 
@@ -297,7 +297,7 @@ class ReportController extends Controller
             ->get();
 
         $pdf = Pdf::loadView('report.employee.export.training', $data);
-        return $pdf->download('Report Training - ' . $data['model']->name);
+        return $pdf->download('Report Training - ' . $data['model']->name . '.pdf');
         // return view('report.employee.export.training', $data);
     }
     public function datatablesEmployeeTrainings(Request $request)
@@ -367,7 +367,7 @@ class ReportController extends Controller
         }
 
         $pdf = Pdf::loadView('report.employee.export.detail-training', ['model' => $detail, 'answers' => $traineeAnswers]);
-        return $pdf->download('Report ' . $detail->training->module->title . ' - ' . $detail->training->title . ' - ' . $detail->trainee->name);
+        return $pdf->download('Report ' . $detail->training->module->title . ' - ' . $detail->training->title . ' - ' . $detail->trainee->name . '.pdf');
         // return view('report.employee.export.detail-training', ['model' => $detail, 'answers' => $traineeAnswers]);
     }
 
