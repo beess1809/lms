@@ -34,7 +34,23 @@
                         <tbody>
                         </tbody>
                     </table>
-                    @if ($model->finishTraining == $model->count && $model->point < $model->passing_grade)
+
+                    @if ($model->finishTraining == $model->count)
+                        <h5>Feedback</h5>
+                        <table id="datatable3" class="table table-sm" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    @endif
+
+                    @if (
+                        $model->finishTraining == $model->count &&
+                            (isset($model->moduleTraining) && $model->moduleTraining->is_passed == 0))
                         <h5>Remedial</h5>
                         <table id="datatable2" class="table table-sm" style="width:100%">
                             <thead>
@@ -96,6 +112,32 @@
                     ordering: false,
                     ajax: {
                         url: "{!! route('training.datatableTraineeRemedial') !!}",
+                        type: 'post',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        data: function(d) {
+                            return $.extend({}, d, {
+                                module_id: {{ $model->id }}
+                            })
+                        },
+                    },
+                    columns: [{
+                        data: 'module',
+                        name: 'module'
+                    }, ]
+                });
+
+                $('#datatable3').DataTable({
+                    processing: true,
+                    serverSide: true,
+                    searching: false,
+                    lengthChange: false,
+                    info: false,
+                    pageLength: 20,
+                    ordering: false,
+                    ajax: {
+                        url: "{!! route('training.datatableTraineeFeedback') !!}",
                         type: 'post',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

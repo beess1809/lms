@@ -433,6 +433,94 @@ class TrainingController extends Controller
             ->make(true);
     }
 
+    public function datatableTraineeFeedback(Request $request)
+    {
+        $query = Training::where('module_id', $request->module_id)->where('type', 3);
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('module', function ($model) {
+                if ($model->is_active == 1) {
+                    $checked = 'checked';
+                } else {
+                    $checked = '';
+                }
+                $trainee = $model->traineeEmployee;
+
+                if ($trainee) {
+                    $pass =  !is_null($trainee->point) ? ($trainee->is_passed > 0 ? '<span class="badge badge-success">Lulus</span>' : '<span class="badge badge-danger">Tidak Lulus</span>') : '';
+
+                    $status = !is_null($trainee->point) ? 'Selesai' : 'Dalam Penilaian';
+
+                    if (!isset($trainee->finished_at)) {
+                        $status = 'Belum Selesai';
+                        $button = '<button type="button" class="btn btn-phintraco" onClick=clicked("' . route('trainee.training', ['id' => base64_encode($model->id)]) . '")>Lanjutkan</button>';
+                    } else {
+                        $button = '';
+                    }
+                    $score = $trainee->point;
+                } else {
+                    $pass = "";
+                    $status = "Belum Dikerjakan";
+                    $button = '<button type="button" class="btn btn-phintraco" onClick=clicked("' . route('trainee.training', ['id' => base64_encode($model->id)]) . '")>Mulai</button>';
+                    $score = "-";
+                }
+
+                $html = '
+                <div class="border-table">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="list-training-title">
+                            ' . $model->title . '
+                        </div>
+                        <div class="row">
+                            <div class="list-training-content">
+                                <div class="icon">
+                                    <img src="' . asset("img/icon/toga.svg") . '" alt="">
+                                </div>
+                                <div class="detail">Mastery Score
+                                    <br>
+                                    <span>' . $model->passing_grade . '</span>
+                                </div>
+                            </div>
+                            <div class="list-training-content">
+                                <div class="icon">
+                                    <img src="' . asset("img/icon/thropy.svg") . '" alt="">
+                                </div>
+                                <div class="detail">Score
+                                    <br>
+                                    <span>' . $score . '</span>
+                                </div>
+                            </div>
+                            <div class="list-training-content">
+                                <div class="icon">
+                                    <img src="' . asset("img/icon/load.svg") . '" alt="">
+                                </div>
+                                <div class="detail">Status
+                                    <br>
+                                    <span>' . $status . '</span>
+                                </div>
+                            </div>
+                            <div class="list-training-content">
+                                <div class="align-self-center">
+                                     ' . $pass . '
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 " style="align-self: center;">
+                        <div class="float-sm-right">
+                            ' . $button . '
+                        </div>
+                    </div>
+                </div>
+            </div>';
+                return $html;
+            })
+            ->rawColumns(['module'])
+            ->make(true);
+    }
+
     public function training($id)
     {
         $id = base64_decode($id);
@@ -619,7 +707,9 @@ class TrainingController extends Controller
         }
 
         $traineeModule = TraineeModule::where('module_id', $module_id)->where('employee_uuid', $uuid)->first();
-        $last_point = $traineeModule ? $traineeModule->point : 0;
+        $totalTraining = Training::where('module_id', $module_id)->where('type', 1)->count();
+
+        $last_point = $traineeModule ? ($traineeModule->point * $totalTraining) : 0;
 
         DB::beginTransaction();
         try {
@@ -627,7 +717,7 @@ class TrainingController extends Controller
 
             if ($training->type == 1) {
                 if (!isset($model->point)) {
-                    $module_point = ($last_point + $point) / $module->training->count();
+                    $module_point = ($last_point + $point) / $totalTraining;
                     if ($traineeModule) {
                         $traineModule_update = TraineeModule::find($traineeModule->id);
                     } else {

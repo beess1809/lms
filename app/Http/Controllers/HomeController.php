@@ -67,7 +67,7 @@ class HomeController extends Controller
                 $html = '
                 <div class="border-table">
                     <div class="row">
-                        <div class="col-sm-8" onClick=clicked("' . route('trainee.module', ['id' => base64_encode($model->id)]) . '")>
+                        <div class="col-sm-8"  style="cursor:pointer" onClick=clicked("' . route('trainee.module', ['id' => base64_encode($model->id)]) . '")>
                             <div class="list-training-title">
                             ' . $model->title . '
                             </div>

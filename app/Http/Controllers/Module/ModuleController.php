@@ -7,6 +7,7 @@ use App\Models\Master\Category;
 use App\Models\Master\ModuleType;
 use App\Models\Module\Module;
 use App\Models\Module\Training;
+use App\Models\Trainee\TraineeModule;
 use App\Models\Trainee\TraineeTraining;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -182,7 +183,7 @@ class ModuleController extends Controller
                     $checked = '';
                 }
                 $html = '
-                <div class="border-table">
+                <div class="border-table" style="cursor: pointer;">
                     <div class="row">
                         <div class="col-sm-9" onClick=clicked("' . route('module.show', ['id' => base64_encode($model->id)]) . '")>
                             <div class="center">
@@ -217,8 +218,16 @@ class ModuleController extends Controller
         $id = base64_decode($id);
         $model = Module::find($id);
         $model->count = Training::where('module_id', $id)->where('type', 1)->count();
-        $model->finishTraining = TraineeTraining::join('trainings as t', 't.id', '=', 'trainee_trainings.training_id')->where('t.type', 1)->where('t.module_id', $id)->count();
-        $model->notScoring = TraineeTraining::whereNull('point')->count();
+        $model->finishTraining = TraineeTraining::join('trainings as t', 't.id', '=', 'trainee_trainings.training_id')
+            ->where('t.type', 1)
+            ->where('t.module_id', $id)
+            ->where('employee_uuid', Auth::user()->uuid)
+            ->count();
+
+        $model->moduleTraining = TraineeModule::where('module_id', $id)->where('employee_uuid', Auth::user()->uuid)->first();
+
+        // $model->notScoring = TraineeTraining::whereNull('point')->count();
+
         return view('trainee.module', ['model' => $model]);
     }
 }
