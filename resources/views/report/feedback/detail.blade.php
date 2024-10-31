@@ -44,7 +44,7 @@
     <div>
         <table style="width:100%">
             <tr>
-                <td><img src="img/phintech.png" style="width: 200px"></td>
+                <td><img src="img/phintraco.png" style="width: 200px"></td>
                 <td style="text-align: right">
                     <p style="font-weight: bold">No . F-PTC-HRD-17-010219-03</p>
                 </td>
