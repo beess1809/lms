@@ -50,6 +50,7 @@ Route::middleware('auth:employee')->group(function () {
         Route::get('/dataTables/{module_id}', [TrainingController::class, 'datatables'])->name('dataTables');
         Route::post('trainee/dataTables', [TrainingController::class, 'datatableTrainee'])->name('datatableTrainee');
         Route::post('trainee/dataTables2', [TrainingController::class, 'datatableTraineeRemedial'])->name('datatableTraineeRemedial');
+        Route::post('trainee/dataTables3', [TrainingController::class, 'datatableTraineeFeedback'])->name('datatableTraineeFeedback');
         Route::resource('', TrainingController::class, ['parameters' => ['' => 'id']])->except([
             'index',
             'create',
@@ -91,6 +92,9 @@ Route::middleware('auth:employee')->group(function () {
         Route::name('training.')->prefix('training')->group(function () {
             Route::get('/', [ReportController::class, 'training'])->name('index');
             Route::post('/datatableTrainings', [ReportController::class, 'datatableTrainings'])->name('datatableTrainings');
+            Route::get('/feedback', [ReportController::class, 'feedback'])->name('feedback');
+            Route::get('/feedback/{id}', [ReportController::class, 'feedbackDetails'])->name('feedbackDetails');
+            Route::post('/datatableFeedbacks', [ReportController::class, 'datatableFeedbacks'])->name('datatableFeedbacks');
         });
 
         Route::resource('', ReportController::class, ['parameters' => ['' => 'id']]);

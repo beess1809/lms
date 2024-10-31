@@ -132,6 +132,9 @@
                                         <a class="dropdown-item" href="{{ route('report.training.index') }}">
                                             Training
                                         </a>
+                                        <a class="dropdown-item" href="{{ route('report.training.feedback') }}">
+                                            Feedback
+                                        </a>
                                     </li>
                                 </ul>
                             </li>

@@ -526,7 +526,11 @@ class TrainingController extends Controller
         $id = base64_decode($id);
         $data['model'] = Training::find($id);
         $max_question = $data['model']->number_questions < 2 ?  2 : $data['model']->number_questions;
-        $data['training'] = TrainingSub::where('training_id', $id)->get()->shuffle()->shift($max_question);
+        if ($data['model']->type != 3) { //jika general dan remedial
+            $data['training'] = TrainingSub::where('training_id', $id)->get()->shuffle()->shift($max_question);
+        } else { //jika feedback
+            $data['training'] = TrainingSub::where('training_id', $id)->get()->shift($max_question);
+        }
         $parent = Training::find($data['model']->parent_training);
 
         $now = date('Y-m-d H:i:s');

@@ -422,4 +422,67 @@ class ReportController extends Controller
             ->rawColumns(['action', 'result'])
             ->make(true);
     }
+
+
+    public function feedback()
+    {
+        $data['companies'] = Company::all();
+        return view('report.feedback.index', $data);
+    }
+
+    public function datatableFeedbacks(Request $request)
+    {
+        $query = TraineeTraining::join('PECDB.employees as e', 'e.uuid', 'trainee_trainings.employee_uuid')
+            ->join('trainings as t', 't.id', 'trainee_trainings.training_id')
+            ->join('modules as m', 't.module_id', 'm.id')
+            ->join('PECDB.companies as c', 'e.company_id', 'c.id')
+            ->join('PECDB.departments as d', 'e.department_code', 'd.code')
+            ->where('t.type', 3)
+            ->select('trainee_trainings.id', 'trainee_trainings.point', 'e.uuid as uuid', 'e.name as trainee', 'e.empl_id as trainee_nip', 'trainee_trainings.score', 'is_passed', 'finished_at', 'c.name as company', 'd.name as organization', 'm.title as module', 't.title as training', 't.id as training_id')
+            ->orderBy('finished_at', 'desc');
+
+        if ($request->module) {
+            $query->where('m.id', $request->module);
+        }
+
+
+        return DataTables::of($query)
+            ->addIndexColumn()
+            ->addColumn('action', function ($model) {
+                $string = '<a href="' . route('report.training.feedbackDetails', ['id' => base64_encode($model->id)]) . '" type="button" class="btn btn-outline-phintraco">Detail</button';
+                return $string;
+            })
+            ->addColumn('result', function ($model) {
+                if ($model->is_passed == 1) {
+                    $pass = '<span class="badge badge-success">Passed</span>';
+                } else {
+                    $pass = '<span class="badge badge-danger">Not Passed</span>';
+                }
+                return $pass;
+            })
+            ->rawColumns(['action', 'result'])
+            ->make(true);
+    }
+
+    public function feedbackDetails($id)
+    {
+        $data['model'] = TraineeTraining::find(base64_decode($id));
+        $answers = json_decode($data['model']->answer);
+
+        foreach ($answers as $key2 => $value) {
+
+            $answer = Answer::find($value->answer_id);
+            $question = Question::find($value->question_id);
+
+            $details[] = array(
+                'question' => $question->question,
+                'answer' => ($answer ? $answer->answer : $value->answer_id),
+            );
+        }
+        $data['details'] = $details;
+        // return view('report.feedback.detail', $data);
+
+        $pdf = Pdf::loadView('report.feedback.detail', $data);
+        return $pdf->download('Report Feedback' . $data['model']->training->module->title . ' - ' . $data['model']->trainee->name . '.pdf');
+    }
 }
