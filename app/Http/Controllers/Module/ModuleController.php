@@ -217,7 +217,7 @@ class ModuleController extends Controller
     {
         $id = base64_decode($id);
         $model = Module::find($id);
-        $model->count = Training::where('module_id', $id)->where('type', 1)->count();
+        $model->count = Training::where('module_id', $id)->where('type', 1)->orWhere('type', 4)->count();
         $model->finishTraining = TraineeTraining::join('trainings as t', 't.id', '=', 'trainee_trainings.training_id')
             ->where('t.type', 1)
             ->where('t.module_id', $id)

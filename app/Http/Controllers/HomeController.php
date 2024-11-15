@@ -45,10 +45,13 @@ class HomeController extends Controller
             ->addColumn('module', function ($model) {
                 $training = Training::rightJoin('trainee_trainings as tt', 'trainings.id', '=', 'tt.training_id')
                     ->where('module_id', $model->id)
+                    ->where('tt.employee_uuid', Auth::user()->uuid)
                     ->where('type', 1)
-                    ->where('tt.employee_uuid', Auth::user()->uuid)->get();
-                $totalTraining = Training::where('type', 1)
-                    ->where('module_id', $model->id)
+                    ->orWhere('type', 4)
+                    ->get();
+                $totalTraining = Training::where('module_id', $model->id)
+                    ->where('type', 1)
+                    ->orWhere('type', 4)
                     ->count();
                 $status = count($training) > 0 ? ((count($training) == $totalTraining) ? 'Complete' : 'Process') : 'Not Started';
                 $module = TraineeModule::where('module_id', $model->id)->where('employee_uuid', Auth::user()->uuid)->first();

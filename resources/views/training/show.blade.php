@@ -10,7 +10,7 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="background-color: white">
             <li class="breadcrumb-item "><a href="{{ route('module.home', ['tab_id' => 'mandatory']) }}">Modul</a></li>
-            <li class="breadcrumb-item"><a href="{{ url()->previous() }}">Training</a></li>
+            <li class="breadcrumb-item"><a href="{{ url()->previous() }}">Section</a></li>
             <li class="breadcrumb-item active">{{ $data['model']->title }}</li>
         </ol>
     </nav>
@@ -23,22 +23,30 @@
             <div class="card container">
                 <div class="card-body">
                     <ul class="nav nav-tabs" id="tab" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="quizz-tab" data-toggle="pill" href="#quizz" role="tab"
-                                aria-controls="quizz" aria-selected="false">Quizz</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="course-tab" data-toggle="pill" href="#course" role="tab"
-                                aria-controls="course" aria-selected="false">Course</a>
-                        </li>
+                        @if ($data['model']->type == 1)
+                            <li class="nav-item">
+                                <a class="nav-link active" id="quizz-tab" data-toggle="pill" href="#quizz" role="tab"
+                                    aria-controls="quizz" aria-selected="false">Quiz</a>
+                            </li>
+                        @endif
+                        @if ($data['model']->type == 4)
+                            <li class="nav-item">
+                                <a class="nav-link active" id="course-tab" data-toggle="pill" href="#course" role="tab"
+                                    aria-controls="course" aria-selected="false">Course</a>
+                            </li>
+                        @endif
                     </ul>
                     <div class="tab-content" id="tabContent" style="padding-top: 1rem;">
-                        <div class="tab-pane fade show active" id="quizz" role="tabpanel" aria-labelledby="quizz">
-                            @include('training.sub.quizz', $data)
-                        </div>
-                        <div class="tab-pane fade show" id="course" role="tabpanel" aria-labelledby="course">
-                            @include('training.sub.course', $data)
-                        </div>
+                        @if ($data['model']->type == 1)
+                            <div class="tab-pane fade show active" id="quizz" role="tabpanel" aria-labelledby="quizz">
+                                @include('training.sub.quizz', $data)
+                            </div>
+                        @endif
+                        @if ($data['model']->type == 4)
+                            <div class="tab-pane fade show active" id="course" role="tabpanel" aria-labelledby="course">
+                                @include('training.sub.course', $data)
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -109,8 +117,11 @@
             if (window.FormData) {
                 formdata = new FormData(form[0]);
                 event.stopImmediatePropagation();
-                var file = $('input[type=file]')[0].files[0];
-                formdata.append('file', file);
+                if ($('input[type=file]')[0]) {
+                    var file = $('input[type=file]')[0].files[0];
+                    formdata.append('file', file);
+                }
+
                 $('.progress').show();
             }
 

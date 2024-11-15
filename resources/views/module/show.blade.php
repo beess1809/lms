@@ -12,8 +12,8 @@
     </div>
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb" style="background-color: white">
-            <li class="breadcrumb-item "><a href="{{ url()->previous() }}">Modul</a></li>
-            <li class="breadcrumb-item active">Training</li>
+            <li class="breadcrumb-item "><a href="{{ url()->previous() }}">Module</a></li>
+            <li class="breadcrumb-item active">Section</li>
         </ol>
     </nav>
 @endsection
@@ -22,7 +22,7 @@
     <div class="row justify-content-center">
         <div class="col-md-12">
             <a href="{{ route('training.create', ['module_id' => $model->id]) }}" class="btn btn-sm bg-phintraco modal-show"
-                title="Add Training"><i class="fas fa-plus"></i> Training</a>
+                title="Add Section"><i class="fas fa-plus"></i> Section</a>
 
             <table id="datatable" class="table table-sm table-nonborder" style="width:100%">
                 <thead>

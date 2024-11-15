@@ -3,7 +3,7 @@
 @section('content-header')
     <div class="content-header-background">
         <div class="center-content">
-            <h2>Modul</h2>
+            <h2>Module</h2>
             <!-- <span>Lorem Ipsum Dolor Sit Amet</span> -->
         </div>
     </div>
@@ -19,7 +19,7 @@
                             <a class="nav-link {{ $active = $tab_id == 'mandatory' ? 'active' : '' }}" id="tab-mandatory"
                                 href="{{ route('module.home', ['tab_id' => 'mandatory']) }}" role="tab"
                                 aria-controls="tab-mandatory"
-                                aria-selected="{{ $aria = $tab_id == 'mandatory' ? 'true' : 'false' }}">Mandatori</a>
+                                aria-selected="{{ $aria = $tab_id == 'mandatory' ? 'true' : 'false' }}">Mandatory</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {{ $active = $tab_id == 'optional' ? 'active' : '' }}" id="tab-optional"
@@ -32,7 +32,7 @@
                 <div class="col-sm-6">
                     <div class="float-sm-right center-content">
                         <a href="{{ route('module.create') }}" class="btn btn-sm btn-phintraco modal-show"
-                            title="Add Module"><i class="fas fa-plus"></i> Tambah Modul</a>
+                            title="Add Module"><i class="fas fa-plus"></i> Add Module</a>
                     </div>
                 </div>
             </div>

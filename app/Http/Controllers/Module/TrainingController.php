@@ -53,7 +53,6 @@ class TrainingController extends Controller
     {
         $this->validate($request, [
             'title'  => 'required',
-            'passing_grade' => 'required',
             'type' => 'required',
             'description' => 'required',
         ]);
@@ -135,7 +134,6 @@ class TrainingController extends Controller
     {
         $this->validate($request, [
             'title'  => 'required',
-            'passing_grade' => 'required',
             'type' => 'required',
             'description' => 'required',
         ]);
@@ -259,7 +257,7 @@ class TrainingController extends Controller
 
     public function datatableTrainee(Request $request)
     {
-        $query = Training::where('module_id', $request->module_id)->where('type', 1);
+        $query = Training::where('module_id', $request->module_id)->where('type', 1)->orWhere('type', 4);
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -276,12 +274,14 @@ class TrainingController extends Controller
 
                     $status = !is_null($trainee->point) ? 'Selesai' : 'Dalam Penilaian';
 
-                    if (!isset($trainee->finished_at)) {
-                        $status = 'Belum Selesai';
-                        $button = '<button type="button" class="btn btn-phintraco" onClick=clicked("' . route('trainee.training', ['id' => base64_encode($model->id)]) . '")>Lanjutkan</button>';
-                    } else {
-                        $button = '';
-                    }
+                    // if (!isset($trainee->finished_at)) {
+                    //     $status = 'Belum Selesai';
+                    //     $button = '<button type="button" class="btn btn-phintraco" onClick=clicked("' . route('trainee.training', ['id' => base64_encode($model->id)]) . '")>Lanjutkan</button>';
+                    // } else {
+                    //     $button = '';
+                    // }
+                    $button = '';
+
                     $score = $trainee->point;
                 } else {
                     $pass = "";
@@ -526,9 +526,9 @@ class TrainingController extends Controller
         $id = base64_decode($id);
         $data['model'] = Training::find($id);
         $max_question = $data['model']->number_questions < 2 ?  2 : $data['model']->number_questions;
-        if ($data['model']->type != 3) { //jika general dan remedial
+        if ($data['model']->type == 1 || $data['model']->type == 2) { //jika general dan remedial
             $data['training'] = TrainingSub::where('training_id', $id)->get()->shuffle()->shift($max_question);
-        } else { //jika feedback
+        } else { //jika feedback dan materi
             $data['training'] = TrainingSub::where('training_id', $id)->get()->shift($max_question);
         }
         $parent = Training::find($data['model']->parent_training);
@@ -549,19 +549,6 @@ class TrainingController extends Controller
         }
         $now = new DateTime();
 
-        $data['started_at'] = $model->started_at;
-        $start_at = Carbon::createFromFormat('Y-m-d H:i:s', $model->started_at);
-        $finish_at = $start_at->addMinutes($data['model']->duration)->format('Y-m-d H:i:s');
-        $finish = Carbon::createFromFormat('Y-m-d H:i:s', $finish_at);
-
-        $remain = $now->diff($finish);
-
-        $remain_minutes = ($remain->days * 24 * 60) + ($remain->h * 60) + $remain->i;
-        $remain_seconds = $remain->s;
-
-        $data['remain_minutes'] = $remain_minutes;
-        $data['remain_seconds'] = $remain_seconds;
-        $data['finished_at'] = $finish_at;
         if ($parent) {
             if (isset($parent->traineeEmployee)) {
                 return view('trainee.training', $data);
@@ -644,7 +631,14 @@ class TrainingController extends Controller
             $model->answer = json_encode($answer);
             $model->score = $score;
             $model->finished_at = date('Y-m-d H:i:s');
-            $model->is_passed = ($model->score >= $training->passing_grade ? 1 : 0);
+
+            if ($training->type == 1 || $training->type == 2) {
+                $pass = ($model->score >= $training->passing_grade ? 1 : 0);
+            } else {
+                $pass = 1;
+            }
+
+            $model->is_passed = $pass;
             $model->updated_by = Auth::user()->uuid;
 
 
@@ -661,7 +655,7 @@ class TrainingController extends Controller
                 $traineeModule->employee_uuid = Auth::user()->uuid;
                 $traineeModule->module_id = $module->id;
                 $traineeModule->finished_at = ($trainingCount->count() == $count) ?  date('Y-m-d H:i:s') : null;
-                $traineeModule->is_passed = ($trainingCount->count() == $count) ? 1 : 0;
+                // $traineeModule->is_passed = ($trainingCount->count() == $count) ? 1 : 0;
                 $traineeModule->created_by = Auth::user()->uuid;
                 $traineeModule->updated_at = date('Y-m-d H:i:s');
                 $traineeModule->save();

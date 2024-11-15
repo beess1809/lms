@@ -4,9 +4,9 @@
     <div class="content-header-background">
         <div class="center-content">
             <h2>{{ $model->title }}</h2>
-            <h5>Started At : {{ sqlindo_datetime_to_datetime($started_at) }}</h5>
-            <h5>Duration : {{ $model->duration . ' minutes' }}</h5>
-            <h5>Remain : <span id="countdown">{{ $remain_minutes . ':' . $remain_seconds }}</span>
+            {{-- <h5>Started At : {{ sqlindo_datetime_to_datetime($started_at) }}</h5> --}}
+            {{-- <h5>Duration : {{ $model->duration . ' second' }}</h5> --}}
+            <h5>Remain : <span id="countdown"></span>
             </h5>
         </div>
     </div>
@@ -17,7 +17,7 @@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-                    Tentang Training
+                    About Training
                 </div>
                 <div class="card-body">
                     {{ $model->description }}
@@ -96,7 +96,8 @@
                 @endforeach
                 <hr>
                 <div>
-                    <button type="submit" id="submitTraining" class="btn btn-phintraco float-right">Submit</button>
+                    <button type="submit" id="submitTraining" class="btn btn-phintraco float-right"
+                        style="display: none">Submit</button>
                 </div>
             </form>
         </div>
@@ -115,32 +116,13 @@
     </script>
 
     <script>
-        let totalTime = {{ $remain_minutes * 60 + $remain_seconds }}; // 60 menit dalam detik
-        let countdownDisplay = document.getElementById('countdown');
-        let submitTraining = document.getElementById("submitTraining");
-
-        function startCountdown() {
-            let interval = setInterval(function() {
-                let minutes = Math.floor(totalTime / 60);
-                let seconds = totalTime % 60;
-
-                // Tambahkan nol di depan angka di bawah 10
-                minutes = minutes < 10 ? '0' + minutes : minutes;
-                seconds = seconds < 10 ? '0' + seconds : seconds;
-
-                countdownDisplay.textContent = minutes + ':' + seconds;
-
-                // Kurangi total waktu, hentikan saat mencapai 0
-                totalTime--;
-                if (totalTime < 0) {
-                    clearInterval(interval);
-                    countdownDisplay.textContent = "Waktu Habis!";
-                    submitTraining.click();
-                }
-            }, 1000); // Update setiap 1 detik
-        }
-
-        // Mulai hitung mundur saat halaman dimuat
-        window.onload = startCountdown;
+        var timeleft = {{ $model->duration }};
+        var downloadTimer = setInterval(function() {
+            if (timeleft <= 0) {
+                clearInterval(downloadTimer);
+                $('#submitTraining').show()
+            }
+            timeleft -= 1;
+        }, {{ $model->duration * 100 }});
     </script>
 @endpush
