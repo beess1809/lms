@@ -80,7 +80,7 @@
                     <div class="row">
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label for="">Module Point</label>
+                                <label for="">Total Score</label>
                             </div>
                         </div>
                         <div class="col-md-10">

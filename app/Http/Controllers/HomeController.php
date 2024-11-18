@@ -88,7 +88,7 @@ class HomeController extends Controller
                                     <div class="icon">
                                         <img src="' . asset("img/icon/toga.svg") . '" alt="">
                                     </div>
-                                    <div class="detail">Mastery Score
+                                    <div class="detail">Minimum Score
                                         <br>
                                         <span>' . $model->passing_grade . '</span>
                                     </div>
@@ -97,7 +97,7 @@ class HomeController extends Controller
                                     <div class="icon">
                                         <img src="' . asset("img/icon/thropy.svg") . '" alt="">
                                     </div>
-                                    <div class="detail">Score
+                                    <div class="detail">Total Score
                                         <br>
                                         <span>' . $module_point . '</span>
                                     </div>

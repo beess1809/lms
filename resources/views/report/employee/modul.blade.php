@@ -70,7 +70,7 @@
                                 <thead>
                                     <tr>
                                         <th style="vertical-align:middle">Module Name</th>
-                                        <th style="vertical-align:middle;">Point</th>
+                                        <th style="vertical-align:middle;">Total Score</th>
                                         <th style="vertical-align:middle;">Status</th>
                                         <th style="vertical-align:middle;"></th>
                                     </tr>

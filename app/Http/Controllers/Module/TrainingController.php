@@ -210,7 +210,7 @@ class TrainingController extends Controller
                                 <div class="icon">
                                     <img src="' . asset("img/icon/toga.svg") . '" alt="">
                                 </div>
-                                <div class="detail">Mastery Score
+                                <div class="detail">Minimum Score
                                     <br>
                                     <span>' . $model->passing_grade . '</span>
                                 </div>
@@ -304,7 +304,7 @@ class TrainingController extends Controller
                                 <div class="icon">
                                     <img src="' . asset("img/icon/toga.svg") . '" alt="">
                                 </div>
-                                <div class="detail">Mastery Score
+                                <div class="detail">Minimum Score
                                     <br>
                                     <span>' . $model->passing_grade . '</span>
                                 </div>
@@ -392,7 +392,7 @@ class TrainingController extends Controller
                                 <div class="icon">
                                     <img src="' . asset("img/icon/toga.svg") . '" alt="">
                                 </div>
-                                <div class="detail">Mastery Score
+                                <div class="detail">Minimum Score
                                     <br>
                                     <span>' . $model->passing_grade . '</span>
                                 </div>
@@ -480,7 +480,7 @@ class TrainingController extends Controller
                                 <div class="icon">
                                     <img src="' . asset("img/icon/toga.svg") . '" alt="">
                                 </div>
-                                <div class="detail">Mastery Score
+                                <div class="detail">Minimum Score
                                     <br>
                                     <span>' . $model->passing_grade . '</span>
                                 </div>
