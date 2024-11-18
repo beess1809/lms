@@ -23,13 +23,12 @@
             <div class="card container">
                 <div class="card-body">
                     <ul class="nav nav-tabs" id="tab" role="tablist">
-                        @if ($data['model']->type == 1)
+                        @if ($data['model']->type != 4)
                             <li class="nav-item">
                                 <a class="nav-link active" id="quizz-tab" data-toggle="pill" href="#quizz" role="tab"
                                     aria-controls="quizz" aria-selected="false">Quiz</a>
                             </li>
-                        @endif
-                        @if ($data['model']->type == 4)
+                        @else
                             <li class="nav-item">
                                 <a class="nav-link active" id="course-tab" data-toggle="pill" href="#course" role="tab"
                                     aria-controls="course" aria-selected="false">Course</a>
@@ -37,12 +36,11 @@
                         @endif
                     </ul>
                     <div class="tab-content" id="tabContent" style="padding-top: 1rem;">
-                        @if ($data['model']->type == 1)
+                        @if ($data['model']->type != 4)
                             <div class="tab-pane fade show active" id="quizz" role="tabpanel" aria-labelledby="quizz">
                                 @include('training.sub.quizz', $data)
                             </div>
-                        @endif
-                        @if ($data['model']->type == 4)
+                        @else
                             <div class="tab-pane fade show active" id="course" role="tabpanel" aria-labelledby="course">
                                 @include('training.sub.course', $data)
                             </div>

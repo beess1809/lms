@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Module;
 
 use App\Http\Controllers\Controller;
+use App\Models\Module\Answer;
 use App\Models\Module\Module;
+use App\Models\Module\Question;
 use App\Models\Module\Training;
 use App\Models\Module\TrainingSub;
 use App\Models\Trainee\TraineeModule;
@@ -712,21 +714,29 @@ class TrainingController extends Controller
         DB::beginTransaction();
         try {
             $model = TraineeTraining::find($id);
+            if ($traineeModule) {
+                $traineModule_update = TraineeModule::find($traineeModule->id);
+            } else {
+                $traineModule_update = new TraineeModule();
+                $traineModule_update->employee_uuid = $uuid;
+            }
 
             if ($training->type == 1) {
                 if (!isset($model->point)) {
                     $module_point = ($last_point + $point) / $totalTraining;
-                    if ($traineeModule) {
-                        $traineModule_update = TraineeModule::find($traineeModule->id);
-                    } else {
-                        $traineModule_update = new TraineeModule();
-                        $traineModule_update->employee_uuid = $uuid;
-                    }
+
                     $traineModule_update->point = $module_point;
                     $traineModule_update->is_passed = ($module_point >= $module->passing_grade ? 1 : 0);
                     $traineModule_update->save();
                 }
+            } else if ($training->type == 2) {
+                if ($point >= $module->passing_grade) {
+                    $traineModule_update->point = $module->passing_grade;
+                    $traineModule_update->is_passed = 1;
+                    $traineModule_update->save();
+                }
             }
+
             $model->answer = json_encode($answer);
             $model->score = $point;
             $model->point = $point;
@@ -734,16 +744,114 @@ class TrainingController extends Controller
             $model->updated_by = Auth::user()->uuid;
             $model->save();
 
-
-
-
             DB::commit();
-            return redirect()->back()->with('alert.success', 'Submit nilai Berhasil');
+            return redirect()->back()->with('alert.success', 'Section Has Been Scored');
         } catch (Exception $e) {
             DB::rollBack();
             Log::error($e);
-            dd($e);
-            return redirect()->back()->with('alert.failed', 'Maaf Terjadi Kesalahan, Silahkan Coba Lagi');
+            return redirect()->back()->with('alert.failed', 'Something went wrong');
+        }
+    }
+
+    function uploadBulk(Request $request)
+    {
+        $this->validate($request, [
+            'file' => 'required|mimes:csv,xls,xlsx',
+        ]);
+        $file = $request->file('file');
+        $nama_file = rand() . '_' . $file->getClientOriginalName();
+        $file->move('file/upload/', $nama_file);
+        $inputFileName = public_path('/file/upload/' . $nama_file);
+
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($inputFileName);
+        $reader->setReadDataOnly(true);
+        $spreadSheet = $reader->load($inputFileName);
+        $worksheet = $spreadSheet->getActiveSheet();
+        $lastRow = $worksheet->getHighestRow();
+        $dataTemp = [];
+        for ($row = 2; $row <= $lastRow; $row++) {
+            $temp = [];
+            $temp['question'] = $worksheet->getCell('B' . $row)->getFormattedValue();
+            $temp['type'] = $worksheet->getCell('C' . $row)->getValue();
+            $temp['jawaban'] = $worksheet->getCell('D' . $row)->getValue();
+            $temp['a'] = $worksheet->getCell('E' . $row)->getValue();
+            $temp['b'] = $worksheet->getCell('F' . $row)->getValue();
+            $temp['c'] = $worksheet->getCell('G' . $row)->getValue();
+            $temp['d'] = $worksheet->getCell('H' . $row)->getValue();
+
+            $dataTemp[] = $temp;
+        }
+        unlink(public_path('/file/upload/' . $nama_file));
+
+
+        foreach ($dataTemp as $key) {
+
+
+            DB::beginTransaction();
+            try {
+
+                $model = new TrainingSub();
+                $model->training_id = $request->training_id;
+                $model->type_answer = $key['type'];
+                $model->training_type_id = 1;
+                $model->created_by = Auth::user()->uuid;
+                $model->save();
+
+                if ($model->save()) {
+                    $question = new Question();
+                    $question->training_sub_id = $model->id;
+                    $question->question = $key['question'];
+                    $question->save();
+                    if ($key['a']) {
+                        $answer = new Answer();
+                        $answer->question_id = $question->id;
+                        $answer->answer =  $key['a'];
+                        $answer->save();
+
+                        if ($key['jawaban'] ==  'a') {
+                            $question->answer_id = $answer->id;
+                            $question->save();
+                        }
+                    }
+                    if ($key['b']) {
+                        $answer = new Answer();
+                        $answer->question_id = $question->id;
+                        $answer->answer =  $key['b'];
+                        $answer->save();
+
+                        if ($key['jawaban'] ==  'b') {
+                            $question->answer_id = $answer->id;
+                            $question->save();
+                        }
+                    }
+                    if ($key['c']) {
+                        $answer = new Answer();
+                        $answer->question_id = $question->id;
+                        $answer->answer =  $key['c'];
+                        $answer->save();
+
+                        if ($key['jawaban'] ==  'c') {
+                            $question->answer_id = $answer->id;
+                            $question->save();
+                        }
+                    }
+                    if ($key['d']) {
+                        $answer = new Answer();
+                        $answer->question_id = $question->id;
+                        $answer->answer =  $key['d'];
+                        $answer->save();
+
+                        if ($key['jawaban'] ==  'd') {
+                            $question->answer_id = $answer->id;
+                            $question->save();
+                        }
+                    }
+                }
+                DB::commit();
+            } catch (Exception $e) {
+                DB::rollBack();
+                Log::error($e);
+            }
         }
     }
 }
