@@ -122,7 +122,8 @@
                 clearInterval(downloadTimer);
                 $('#submitTraining').show()
             }
+            console.log(timeleft)
             timeleft -= 1;
-        }, {{ $model->duration * 100 }});
+        }, 1000);
     </script>
 @endpush
