@@ -26,8 +26,10 @@
                     ? '<label class="text-green">Correct</label>'
                     : '<label class="text-red">Incorrect</label>' !!}
             @else
-                <label
-                    class="form-check-label">{{ isset($question_answer[$sub['sub']->question->id]) ? $question_answer[$sub['sub']->question->id] : '' }}</label>
+                {{-- <label
+                    class="form-check-label">{{ isset($question_answer[$sub['sub']->question->id]) ? $question_answer[$sub['sub']->question->id] : '' }}</label> --}}
+
+                {{ print_r($question_answer[$sub['sub']->question->id]) }}
                 <input type="hidden" name="answer[]"
                     value="{{ isset($question_answer[$sub['sub']->question->id]) ? $question_answer[$sub['sub']->question->id] : '' }}">
             @endif

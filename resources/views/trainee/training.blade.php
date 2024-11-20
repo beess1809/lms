@@ -6,7 +6,6 @@
             <h2>{{ $model->title }}</h2>
             {{-- <h5>Started At : {{ sqlindo_datetime_to_datetime($started_at) }}</h5> --}}
             {{-- <h5>Duration : {{ $model->duration . ' second' }}</h5> --}}
-            <h5>Remain : <span id="countdown"></span>
             </h5>
         </div>
     </div>
@@ -40,13 +39,13 @@
                                             <label>{{ $sub->question->question }}</label>
                                         </div>
                                     </div>
-                                    <input class="form-check-input" type="hidden" name="answer[{{ $sub->question->id }}]"
+                                    <input class="form-check-input" type="hidden" name="question[{{ $sub->question->id }}]"
                                         value="{{ $sub->question->answer_id }}">
                                     @foreach ($sub->question->answer->shuffle() as $item)
                                         <div class="form-check col-6">
                                             <input
                                                 class="form-check-input answer-{{ $sub->exists ? 'quizz-' . $sub->id : 'quizz-0' }}"
-                                                type="radio" name="question[{{ $sub->question->id }}]"
+                                                type="radio" name="answer[{{ $sub->question->id }}]"
                                                 value="{{ $item->id }}">
                                             <label class="form-check-label">{{ $item->answer }}</label>
                                         </div>

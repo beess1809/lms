@@ -49,7 +49,7 @@
         <label for="duration">Duration (Second)</label>
         <input type="number" class="form-control @error('duration') is-invalid @enderror" name="duration"
             id="duration" min="0" value="{{ $model->exists ? $model->duration : '' }}"
-            placeholder="Duration (Minutes)">
+            placeholder="Duration (Second)">
     </div>
 
     <div class="form-group">

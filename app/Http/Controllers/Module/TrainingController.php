@@ -709,7 +709,7 @@ class TrainingController extends Controller
         $traineeModule = TraineeModule::where('module_id', $module_id)->where('employee_uuid', $uuid)->first();
         $totalTraining = Training::where('module_id', $module_id)->where('type', 1)->count();
 
-        $last_point = $traineeModule ? ($traineeModule->point * $totalTraining) : 0;
+        $last_point = $traineeModule ? ($traineeModule->point) : 0;
 
         DB::beginTransaction();
         try {

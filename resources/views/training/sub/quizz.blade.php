@@ -150,6 +150,17 @@
 
         $("#btn-upload-bulk").click(function(event) {
             event.preventDefault();
+            Swal.fire({
+                type: 'info',
+                title: 'Please Wait !',
+                text: 'Process Upload',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                onBeforeOpen: () => {
+                    Swal.showLoading();
+                },
+            });
 
             var data = $(this).data("id");
 
@@ -177,14 +188,13 @@
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-
                     Swal.fire({
                         icon: "success",
                         title: "Success",
                         text: "Upload Success !",
-                        timer: 2000,
                         confirmButtonColor: "#3085d6",
                     });
+                    $("#modal-upload").modal("hide");
                     $("#datatable").DataTable().ajax.reload();
 
                 },
