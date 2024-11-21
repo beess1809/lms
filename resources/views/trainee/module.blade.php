@@ -8,7 +8,19 @@
         </div>
     </div>
 @endsection
+@push('style')
+    <style>
+        .table thead th {
+            vertical-align: bottom;
+            border-bottom: none;
+        }
 
+        .table th,
+        .table td {
+            border-top: none;
+        }
+    </style>
+@endpush
 @section('content')
     <div class="row justify-content-center">
         <div class="col-md-4" style="margin-top:12px">

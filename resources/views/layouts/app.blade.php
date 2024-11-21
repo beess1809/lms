@@ -60,16 +60,6 @@
             background-color: #fff;
         }
 
-        .table thead th {
-            vertical-align: bottom;
-            border-bottom: none;
-        }
-
-        .table th,
-        .table td {
-            border-top: none;
-        }
-
         .table tbody tr.active {
             background-color: rgba(0, 0, 0, .05);
         }
