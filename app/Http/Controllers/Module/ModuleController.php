@@ -219,9 +219,12 @@ class ModuleController extends Controller
         $model = Module::find($id);
         $model->count = Training::where('module_id', $id)->where('type', 1)->orWhere('type', 4)->count();
         $model->finishTraining = TraineeTraining::join('trainings as t', 't.id', '=', 'trainee_trainings.training_id')
-            ->where('t.type', 1)
             ->where('t.module_id', $id)
             ->where('employee_uuid', Auth::user()->uuid)
+            ->where(function ($query) {
+                $query->where('type', 1);
+                $query->orWhere('type', 4);
+            })
             ->count();
 
         $model->moduleTraining = TraineeModule::where('module_id', $id)->where('employee_uuid', Auth::user()->uuid)->first();

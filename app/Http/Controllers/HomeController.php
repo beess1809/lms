@@ -46,8 +46,10 @@ class HomeController extends Controller
                 $training = Training::rightJoin('trainee_trainings as tt', 'trainings.id', '=', 'tt.training_id')
                     ->where('module_id', $model->id)
                     ->where('tt.employee_uuid', Auth::user()->uuid)
-                    ->where('type', 1)
-                    ->orWhere('type', 4)
+                    ->where(function ($query) {
+                        $query->where('type', 1);
+                        $query->orWhere('type', 4);
+                    })
                     ->get();
                 $totalTraining = Training::where('module_id', $model->id)
                     ->where('type', 1)
@@ -61,7 +63,7 @@ class HomeController extends Controller
                     $pass = '';
                 } else {
                     $module_point = $module->point;
-                    if ($module_point > $model->passing_grade) {
+                    if ($module_point >= $model->passing_grade) {
                         $pass = '<span class="badge badge-success">Lulus</span>';
                     } else {
                         $pass = '<span class="badge badge-danger">Tidak Lulus</span>';
