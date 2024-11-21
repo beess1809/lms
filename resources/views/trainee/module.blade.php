@@ -25,7 +25,7 @@
             <div class="card">
                 <div class="card-body">
                     <h5>Reguler</h5>
-                    <table id="datatable" class="table table-sm" style="width:100%">
+                    <table id="datatable" class="table table-sm datatable" style="width:100%">
                         <thead>
                             <tr>
                                 <th></th>
@@ -36,8 +36,8 @@
                     </table>
 
                     @if ($model->finishTraining == $model->count)
-                        <h5>Feedback</h5>
-                        <table id="datatable3" class="table table-sm" style="width:100%">
+                        <h5 class="mt-4">Feedback</h5>
+                        <table id="datatable3" class="table table-sm datatable" style="width:100%">
                             <thead>
                                 <tr>
                                     <th></th>
@@ -51,8 +51,8 @@
                     @if (
                         $model->finishTraining == $model->count &&
                             (isset($model->moduleTraining) && $model->moduleTraining->is_passed == 0))
-                        <h5>Remedial</h5>
-                        <table id="datatable2" class="table table-sm" style="width:100%">
+                        <h5 class="mt-4">Remedial</h5>
+                        <table id="datatable2" class="table table-sm datatable" style="width:100%">
                             <thead>
                                 <tr>
                                     <th></th>
@@ -84,6 +84,7 @@
                     info: false,
                     pageLength: 20,
                     ordering: false,
+                    bPaginate: false,
                     ajax: {
                         url: "{!! route('training.datatableTrainee') !!}",
                         type: 'post',
@@ -110,6 +111,7 @@
                     info: false,
                     pageLength: 20,
                     ordering: false,
+                    bPaginate: false,
                     ajax: {
                         url: "{!! route('training.datatableTraineeRemedial') !!}",
                         type: 'post',
@@ -136,6 +138,7 @@
                     info: false,
                     pageLength: 20,
                     ordering: false,
+                    bPaginate: false,
                     ajax: {
                         url: "{!! route('training.datatableTraineeFeedback') !!}",
                         type: 'post',
