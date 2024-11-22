@@ -13,33 +13,46 @@
 
         <div class="row">
             <div class="form-group col-8">
-                <label for="question">Pertanyaan</label>
+                <label for="question">Question</label>
                 <textarea name="question" id="question" class="form-control" placeholder="Describe your training">{{ $sub->exists ? $sub->question->question : '' }}</textarea>
             </div>
             <div class="form-group col-4">
-                <label for="type_file">Tipe Jawaban</label>
+                <label for="type_file">Type Answer</label>
                 <select name="type_answer" id="type_answer" class="form-control" required>
-                    <option value="">Pilih Tipe Jawaban</option>
+                    <option value="">Select Type Answer</option>
                     <option {{ $sub->exists ? ($sub->type_answer == 1 ? 'selected' : '') : '' }} value="1">
-                        Pilihan Ganda</option>
-                    <option {{ $sub->exists ? ($sub->type_answer == 2 ? 'selected' : '') : '' }} value="2">Esay
+                        Multiple Choice</option>
+                    <option {{ $sub->exists ? ($sub->type_answer == 2 ? 'selected' : '') : '' }} value="2">Essay
                     </option>
                 </select>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-6" id="jawaban">
-                <label for="file">Jawaban</label>
+                <label for="file">Answer</label>
                 <div class="input-group input-group-sm">
                     <input type="text" class="form-control"
                         id="answer-value-{{ $sub->exists ? 'quizz-' . $sub->id : 'quizz-0' }}">
                     <span class="input-group-append">
                         <button type="button" class="btn btn-outline-phintraco btn-flat" id=""
-                            onclick="addAnswer('{{ $sub->exists ? 'quizz-' . $sub->id : 'quizz-0' }}')">Tambah
-                            Jawaban</button>
+                            onclick="addAnswer('{{ $sub->exists ? 'quizz-' . $sub->id : 'quizz-0' }}')">Add
+                            Answer</button>
                     </span>
                 </div>
             </div>
+            <div class="col-2"></div>
+            @if ($model->type == 3)
+                <div class="form-group col-4">
+                    <label for="type_file">Question Group</label>
+                    <select name="question_group" id="question_group" class="form-control" required>
+                        <option value="">Select Question Group</option>
+                        @foreach (App\Models\Module\QuestionGroup::all() as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+
+                    </select>
+                </div>
+            @endif
         </div>
 
         <div id="group-answer-{{ $sub->exists ? 'quizz-' . $sub->id : 'quizz-0' }}">

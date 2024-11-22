@@ -18,4 +18,9 @@ class Question extends Model
     {
         return $this->hasOne(Answer::class, 'id', 'answer_id');
     }
+
+    public function group()
+    {
+        return $this->hasOne(QuestionGroup::class, 'id', 'question_group_id');
+    }
 }

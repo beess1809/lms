@@ -79,6 +79,9 @@ class TrainingSubController extends Controller
                     $question = new Question();
                     $question->training_sub_id = $model->id;
                     $question->question = $request->question;
+                    if ($request->question_group == 3) {
+                        $question->question_group_id = $request->question_group;
+                    }
                     $question->save();
                     if ($request->answer) {
                         foreach ($request->answer as $key => $value) {

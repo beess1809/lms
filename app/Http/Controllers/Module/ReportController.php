@@ -469,17 +469,41 @@ class ReportController extends Controller
         $data['model'] = TraineeTraining::find(base64_decode($id));
         $answers = json_decode($data['model']->answer);
 
-        foreach ($answers as $key2 => $value) {
+        foreach ($answers as $key => $value) {
 
-            $answer = Answer::find($value->answer_id);
             $question = Question::find($value->question_id);
 
-            $details[] = array(
-                'question' => $question->question,
-                'answer' => ($answer ? $answer->answer : $value->answer_id),
+
+            $group[$question->question_group_id] = array(
+                'group_name' => $question->group->name
             );
         }
-        $data['details'] = $details;
+
+        foreach ($group as $key => $valu) {
+            $details = [];
+            foreach ($answers as $key2 => $value) {
+
+                $answer = Answer::find($value->answer_id);
+                $question = Question::find($value->question_id);
+
+                if ($key == $question->question_group_id) {
+                    $details[] = array(
+                        'question' => $question->question,
+                        'answers' => $question->answer,
+                        'answer' => ($answer ? $answer->answer : $value->answer_id),
+                    );
+                }
+
+                $group[$key] = array(
+                    'group_name' => $valu['group_name'],
+                    'details' => $details
+                );
+            }
+        }
+
+
+        $data['group'] = $group;
+
         // return view('report.feedback.detail', $data);
 
         $pdf = Pdf::loadView('report.feedback.detail', $data);

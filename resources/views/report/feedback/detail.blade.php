@@ -34,6 +34,17 @@
             padding-top: 1rem;
         }
 
+        .answer {
+            display: inline-flex;
+            width: 100px;
+            margin-left: 2rem;
+        }
+
+        .group {
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+
         body {
             font-size: 10px;
         }
@@ -90,14 +101,40 @@
             <p style="font-weight: bold">Pertanyaan dijawab oleh peserta training ( paling lambat 1 hari setelah
                 pelatihan )</p>
         </div>
-        @foreach ($details as $key => $value)
+        {{-- @foreach ($details as $key => $value)
             <div class="mb-3">
                 <div class="question" style="margin-bottom: 4px">
                     <span>{{ $key + 1 }}.</span> {{ $value['question'] }}
                 </div>
-                <div class="answer">
-                    {{ $value['answer'] }}
+
+                @foreach ($value['answers'] as $item)
+                    <span class="answer">
+                        {{ $item->answer }}
+                    </span>
+                @endforeach
+            </div>
+        @endforeach --}}
+
+
+        @foreach ($group as $item)
+            <div class="mb-3">
+                <div class="group">
+                    {{ $item['group_name'] }}
                 </div>
+
+                @foreach ($item['details'] as $key => $value)
+                    <div class="mt-2">
+                        <div class="question" style="margin-bottom: 4px">
+                            <span>{{ $key + 1 }}.</span> {{ $value['question'] }}
+                        </div>
+
+                        @foreach ($value['answers'] as $item)
+                            <span class="answer">
+                                {{ $item->answer }}
+                            </span>
+                        @endforeach
+                    </div>
+                @endforeach
             </div>
         @endforeach
 

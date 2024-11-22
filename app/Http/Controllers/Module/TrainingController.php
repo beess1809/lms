@@ -659,7 +659,6 @@ class TrainingController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             Log::error($e);
-            dd($e);
             return redirect()->route('trainee.module', ['id' => $request->module_id])->with('alert.failed', 'Sorry, Please Try Again');
         }
     }
