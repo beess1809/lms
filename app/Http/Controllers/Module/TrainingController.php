@@ -259,7 +259,11 @@ class TrainingController extends Controller
 
     public function datatableTrainee(Request $request)
     {
-        $query = Training::where('module_id', $request->module_id)->where('type', 1)->orWhere('type', 4);
+        $query = Training::where('module_id', $request->module_id)
+            ->where(function ($query) {
+                $query->where('type', 1);
+                $query->orWhere('type', 4);
+            });
 
         return DataTables::of($query)
             ->addIndexColumn()
@@ -535,32 +539,16 @@ class TrainingController extends Controller
         }
         $parent = Training::find($data['model']->parent_training);
 
-        $now = date('Y-m-d H:i:s');
-
-        if (!$data['model']->traineeEmployee) {
-            $model = new TraineeTraining();
-            $model->training_id = $data['model']->id;
-            $model->started_at = $now;
-            $model->employee_uuid = Auth::user()->uuid;
-            // $model->finished_at = date('Y-m-d H:i:s');
-            $model->is_passed = 0;
-            $model->created_by = Auth::user()->uuid;
-            $model->save();
-        } else {
-            $model = $data['model']->traineeEmployee;
-        }
-        $now = new DateTime();
-
-        if ($parent) {
-            if (isset($parent->traineeEmployee)) {
+        if ($parent) { //ada parent
+            if (isset($parent->traineeEmployee)) { //parent sudah selesai
                 return view('trainee.training', $data);
-            } else {
+            } else { //parent belum selesai
                 return redirect()->back()->with('alert.failed', 'Please participate in the previous training');
             }
-        } else {
-            if ($data['model']->traineeEmployee && isset($data['model']->traineeEmployee->finished_at)) {
+        } else { //tdk ada parent
+            if ($data['model']->traineeEmployee && isset($data['model']->traineeEmployee->finished_at)) { //sudah seleai
                 return redirect()->back()->with('alert.failed', 'You`re already participate in this training');
-            } else {
+            } else { //belum selesai
                 return view('trainee.training', $data);
             }
         }
@@ -627,13 +615,16 @@ class TrainingController extends Controller
         $score = $sum > 0 ? ($true / $sum) * 100 : 100;
         DB::beginTransaction();
         try {
-            $model = TraineeTraining::find($trainee->id);
+            $model = new TraineeTraining();
+            $model->training_id = $request->training_id;
+            $model->started_at = $request->created_at;
+            $model->employee_uuid = Auth::user()->uuid;
             $model->correct = $true;
             $model->wrong = $false;
             $model->answer = json_encode($answer);
             $model->score = $score;
             $model->finished_at = date('Y-m-d H:i:s');
-
+            $model->created_by = Auth::user()->uuid;
             if ($training->type == 1 || $training->type == 2) {
                 $pass = ($model->score >= $training->passing_grade ? 1 : 0);
             } else {
@@ -668,6 +659,7 @@ class TrainingController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             Log::error($e);
+            dd($e);
             return redirect()->route('trainee.module', ['id' => $request->module_id])->with('alert.failed', 'Sorry, Please Try Again');
         }
     }

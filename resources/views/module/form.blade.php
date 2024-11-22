@@ -17,6 +17,18 @@
     </div>
 
     <div class="form-group">
+        <label for="parent_module">Parent Module</label>
+        <select name="parent_module" id="parent_module"
+            class="form-control select2 @error('parent_module') is-invalid @enderror">
+            <option value="">Select Parent Module</option>
+            @foreach ($modules as $key => $module)
+                <option value="{{ $module->id }}" {{ $model->parent_module == $module->id ? 'selected' : '' }}>
+                    {{ $module->title }}</option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="form-group">
         <label for="category">Category</label>
         <select name="category" id="category" class="form-control select2 @error('category') is-invalid @enderror">
             @foreach ($categories as $key => $category)

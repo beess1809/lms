@@ -52,8 +52,10 @@ class HomeController extends Controller
                     })
                     ->get();
                 $totalTraining = Training::where('module_id', $model->id)
-                    ->where('type', 1)
-                    ->orWhere('type', 4)
+                    ->where(function ($query) {
+                        $query->where('type', 1);
+                        $query->orWhere('type', 4);
+                    })
                     ->count();
                 $status = count($training) > 0 ? ((count($training) == $totalTraining) ? 'Complete' : 'Process') : 'Not Started';
                 $module = TraineeModule::where('module_id', $model->id)->where('employee_uuid', Auth::user()->uuid)->first();

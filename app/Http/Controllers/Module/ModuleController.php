@@ -39,6 +39,7 @@ class ModuleController extends Controller
     {
         $data['categories'] = Category::all();
         $data['types'] = ModuleType::all();
+        $data['modules'] = Module::all();
         $data['model'] = new Module();
         return view('module.form', $data);
     }
@@ -61,6 +62,7 @@ class ModuleController extends Controller
         $model = new Module();
         $model->title = $request->title;
         $model->description = $request->description;
+        $model->parent_module = $request->parent_module;
         $model->category_id = $request->category;
         $model->module_type_id = $request->type;
         $model->expired_at = $request->expired_at;
@@ -126,6 +128,7 @@ class ModuleController extends Controller
         $model = Module::find($id);
         $model->title = $request->title;
         $model->description = $request->description;
+        $model->parent_module = $request->parent_module;
         $model->category_id = $request->category;
         $model->module_type_id = $request->type;
         $model->expired_at = $request->expired_at;
@@ -217,7 +220,12 @@ class ModuleController extends Controller
     {
         $id = base64_decode($id);
         $model = Module::find($id);
-        $model->count = Training::where('module_id', $id)->where('type', 1)->orWhere('type', 4)->count();
+        $model->count = Training::where('module_id', $id)
+            ->where(function ($query) {
+                $query->where('type', 1);
+                $query->orWhere('type', 4);
+            })->count();
+
         $model->finishTraining = TraineeTraining::join('trainings as t', 't.id', '=', 'trainee_trainings.training_id')
             ->where('t.module_id', $id)
             ->where('employee_uuid', Auth::user()->uuid)
@@ -229,8 +237,28 @@ class ModuleController extends Controller
 
         $model->moduleTraining = TraineeModule::where('module_id', $id)->where('employee_uuid', Auth::user()->uuid)->first();
 
-        // $model->notScoring = TraineeTraining::whereNull('point')->count();
+        $model->notScore = TraineeTraining::join('trainings as t', 't.id', '=', 'trainee_trainings.training_id')
+            ->where('t.module_id', $id)
+            ->where('employee_uuid', Auth::user()->uuid)
+            ->where(function ($query) {
+                $query->where('type', 1);
+            })
+            ->whereNull('point')
+            ->count();
 
-        return view('trainee.module', ['model' => $model]);
+        $parent = Module::find($model->parent_module);
+        if ($parent) { //ada parent
+            if (isset($parent->moduleEmployee)) { //parent sudah selesai
+                return view('trainee.module', ['model' => $model]);
+            } else { //parent belum selesai
+                return redirect()->back()->with('alert.failed', 'Please participate in the previous training');
+            }
+        } else { //tdk ada parent
+            if ($model->moduleEmployee && isset($model->moduleEmployee->finished_at)) { //sudah seleai
+                return redirect()->back()->with('alert.failed', 'You`re already participate in this training');
+            } else { //belum selesai
+                return view('trainee.module', ['model' => $model]);
+            }
+        }
     }
 }

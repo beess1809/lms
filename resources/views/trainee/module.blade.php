@@ -26,7 +26,7 @@
         <div class="col-md-4" style="margin-top:12px">
             <div class="card">
                 <div class="card-header">
-                    <h5>Tentang Modul</h5>
+                    <h5>About Module</h5>
                 </div>
                 <div class="card-body">
                     {{ $model->description }}
@@ -62,7 +62,8 @@
 
                     @if (
                         $model->finishTraining == $model->count &&
-                            (isset($model->moduleTraining) && $model->moduleTraining->is_passed == 0))
+                            (isset($model->moduleTraining) && $model->moduleTraining->is_passed == 0) &&
+                            $model->notScore == 0)
                         <h5 class="mt-4">Remedial</h5>
                         <table id="datatable2" class="table table-sm datatable" style="width:100%">
                             <thead>
