@@ -79,7 +79,7 @@ class TrainingSubController extends Controller
                     $question = new Question();
                     $question->training_sub_id = $model->id;
                     $question->question = $request->question;
-                    if ($request->question_group == 3) {
+                    if ($request->question_group) {
                         $question->question_group_id = $request->question_group;
                     }
                     $question->save();
@@ -223,20 +223,25 @@ class TrainingSubController extends Controller
                     $question = Question::where('training_sub_id', $id)->first();
                     $question->training_sub_id = $model->id;
                     $question->question = $request->question;
+                    if ($request->question_group) {
+                        $question->question_group_id = $request->question_group;
+                    }
                     $question->save();
 
                     $oldAnswer = Answer::where('question_id', $question->id);
                     $oldAnswer->delete();
 
-                    foreach ($request->answer as $key => $value) {
-                        $answer = new Answer();
-                        $answer->question_id = $question->id;
-                        $answer->answer = $value;
-                        $answer->save();
+                    if ($request->answer) {
+                        foreach ($request->answer as $key => $value) {
+                            $answer = new Answer();
+                            $answer->question_id = $question->id;
+                            $answer->answer = $value;
+                            $answer->save();
 
-                        if ($key == $request->selected) {
-                            $question->answer_id = $answer->id;
-                            $question->save();
+                            if ($key == $request->selected) {
+                                $question->answer_id = $answer->id;
+                                $question->save();
+                            }
                         }
                     }
                 }

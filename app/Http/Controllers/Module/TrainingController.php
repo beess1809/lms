@@ -681,7 +681,6 @@ class TrainingController extends Controller
         $uuid = base64_decode($request->uuid);
         $answer = [];
         $total = 0;
-
         if ($request->question) {
             foreach ($request->question as $key => $value) {
                 $answer[] = [
@@ -701,7 +700,7 @@ class TrainingController extends Controller
         $totalTraining = Training::where('module_id', $module_id)->where('type', 1)->count();
 
         $last_point = $traineeModule ? ($traineeModule->point) : 0;
-
+        $module_point = (int)$point / $totalTraining;
         DB::beginTransaction();
         try {
             $model = TraineeTraining::find($id);
@@ -714,13 +713,14 @@ class TrainingController extends Controller
 
             if ($training->type == 1) {
                 if (!isset($model->point)) {
-                    $module_point = ($last_point + $point) / $totalTraining;
+                    $module_point = ((int)$last_point + (int)$module_point);
 
                     $traineModule_update->point = $module_point;
                     $traineModule_update->is_passed = ($module_point >= $module->passing_grade ? 1 : 0);
                     $traineModule_update->save();
                 }
             } else if ($training->type == 2) {
+                $traineModule_update->is_remedial = 1;
                 if ($point >= $module->passing_grade) {
                     $traineModule_update->point = $module->passing_grade;
                     $traineModule_update->is_passed = 1;

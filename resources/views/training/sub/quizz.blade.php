@@ -40,14 +40,15 @@
                     </span>
                 </div>
             </div>
-            <div class="col-2"></div>
             @if ($model->type == 3)
                 <div class="form-group col-4">
                     <label for="type_file">Question Group</label>
                     <select name="question_group" id="question_group" class="form-control" required>
                         <option value="">Select Question Group</option>
                         @foreach (App\Models\Module\QuestionGroup::all() as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            <option value="{{ $item->id }}"
+                                {{ $sub->exists && $sub->question->question_group_id == $item->id ? 'selected' : '' }}>
+                                {{ $item->name }}</option>
                         @endforeach
 
                     </select>
