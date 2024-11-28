@@ -64,7 +64,7 @@
                         ($model->finishTraining == $model->count &&
                             (isset($model->moduleTraining) && $model->moduleTraining->is_passed == 0) &&
                             $model->notScore == 0) ||
-                            $model->moduleEmployee->is_remedial == 1)
+                            (isset($model->moduleEmployee) && $model->moduleEmployee->is_remedial == 1))
                         <h5 class="mt-4">Remedial</h5>
                         <table id="datatable2" class="table table-sm datatable" style="width:100%">
                             <thead>
