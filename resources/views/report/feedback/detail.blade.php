@@ -7,7 +7,7 @@
     <!-- CSRF Token -->
     {{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
 
-    <title>{{ config('app.name', 'Laravel') }}{{ isset($title) ? ' | ' . $title : '' }}</title>
+    <title>{{ config('app.name', 'LMS') }}{{ isset($title) ? ' | ' . $title : '' }}</title>
     <!-- Theme style -->
     {{-- <link rel="stylesheet" href="/adminlte/dist/css/adminlte.css"> --}}
     {{-- <link rel="stylesheet" href="{{ asset('css/lms.css') }}"> --}}
@@ -55,9 +55,9 @@
     <div>
         <table style="width:100%">
             <tr>
-                <td><img src="img/phintraco.png" style="width: 200px"></td>
+                <td><img src="img/logo/{{ $img }}" style="width: 200px"></td>
                 <td style="text-align: right">
-                    <p style="font-weight: bold">No . F-PTC-HRD-17-010219-03</p>
+                    <p style="font-weight: bold">{{ $no }}</p>
                 </td>
             </tr>
         </table>
@@ -128,11 +128,16 @@
                             <span>{{ $key + 1 }}.</span> {{ $value['question'] }}
                         </div>
 
-                        @foreach ($value['answers'] as $item)
-                            <span class="answer">
-                                {{ $item->answer }}
-                            </span>
-                        @endforeach
+                        @if (count($value['answers']) > 0)
+                            @foreach ($value['answers'] as $item)
+                                {!! $item->answer == $value['answer']
+                                    ? "<strong><span class='answer'>" . $item->answer . '</span></strong>'
+                                    : "<span class='answer'>" . $item->answer . '</span>' !!}
+                            @endforeach
+                        @else
+                            {!! "<strong><span class='answer'>" . $value['answer'] . '</span></strong>' !!}
+                        @endif
+
                     </div>
                 @endforeach
             </div>

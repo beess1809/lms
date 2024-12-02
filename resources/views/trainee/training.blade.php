@@ -108,6 +108,15 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Please do not leave this page',
+                text: 'Exiting the session may disrupt your progress',
+                showConfirmButton: true,
+                confirmButtonColor: "#3085d6",
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+            })
             $('.file').on('contextmenu', function(e) {
                 return false;
             });

@@ -504,6 +504,77 @@ class ReportController extends Controller
 
         $data['group'] = $group;
 
+        switch ($data['model']->trainee->company_id) {
+            case 1:
+                $data['img'] = 'pg.png';
+                $data['no'] = '';
+                break;
+            case 2:
+                $data['img'] = 'mitracomm.png';
+                $data['no'] = '';
+                break;
+            case 3:
+                $data['img'] = 'mitracomm.png';
+                $data['no'] = '';
+                break;
+            case 4:
+                $data['img'] = 'effist.png';
+                $data['no'] = '';
+                break;
+            case 5:
+                $data['img'] = 'njm.png';
+                $data['no'] = '';
+                break;
+            case 6:
+                $data['img'] = 'pe.png';
+                $data['no'] = '';
+                break;
+            case 7:
+                $data['img'] = 'phintech.png';
+                $data['no'] = 'No . F-PTC-HRD-17-010219-03';
+                break;
+            case 8:
+                $data['img'] = 'asp.png';
+                $data['no'] = 'No . F-ASP-HRD-17';
+                break;
+            case 9:
+                $data['img'] = 'pnk.png';
+                $data['no'] = '';
+                break;
+            case 10:
+                $data['img'] = 'phincon.png';
+                $data['no'] = '';
+                break;
+            case 11:
+                $data['img'] = 'pei.png';
+                $data['no'] = '';
+                break;
+            case 12:
+                $data['img'] = 'pnp.png';
+                $data['no'] = '';
+                break;
+            case 16:
+                $data['img'] = 'vemisha.png';
+                $data['no'] = '';
+                break;
+            case 17:
+                $data['img'] = 'vemisha.png';
+                $data['no'] = '';
+                break;
+            case 1004:
+                $data['img'] = 'pms.png';
+                $data['no'] = '';
+                break;
+            case 1007:
+                $data['img'] = 'mitracomm.png';
+                $data['no'] = '';
+                break;
+            default:
+                $data['img'] = 'pg.png';
+                $data['no'] = '';
+                break;
+        }
+
         // return view('report.feedback.detail', $data);
 
         $pdf = Pdf::loadView('report.feedback.detail', $data);

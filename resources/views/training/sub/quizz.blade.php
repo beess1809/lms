@@ -87,11 +87,16 @@
                 <button type="button" data-id="{{ $sub->exists ? 'quizz-' . $sub->id : 'quizz-0' }}"
                     class="btn btn-phintraco float-right btn-add"><i
                         class="fas fa-{{ $sub->exists ? 'edit' : 'plus' }}"></i>
-                    Tambahkan</button>
+                    Add</button>
 
                 <button type="button" class="btn btn-outline-phintraco float-right" style="margin-right: 1rem"
                     data-target="#modal-upload" data-toggle="modal"><i class="fas fa-file-excel"></i>
                     Upload Bulk</button>
+
+                <a href="{{ route('training.downloadFormat') }}" target="_blank"
+                    class="btn btn-outline-success float-right" style="margin-right: 1rem"><i
+                        class="fas fa-download"></i>
+                    Download Format Upload</a>
             @endif
 
         </div>
@@ -165,7 +170,7 @@
         $("#btn-upload-bulk").click(function(event) {
             event.preventDefault();
             Swal.fire({
-                type: 'info',
+                icon: 'info',
                 title: 'Please Wait !',
                 text: 'Process Upload',
                 showConfirmButton: false,

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Module\Answer;
 use App\Models\Module\Module;
 use App\Models\Module\Question;
+use App\Models\Module\QuestionGroup;
 use App\Models\Module\Training;
 use App\Models\Module\TrainingSub;
 use App\Models\Trainee\TraineeModule;
@@ -19,6 +20,10 @@ use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
 use DateTime;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 
 class TrainingController extends Controller
 {
@@ -769,6 +774,7 @@ class TrainingController extends Controller
             $temp['b'] = $worksheet->getCell('F' . $row)->getValue();
             $temp['c'] = $worksheet->getCell('G' . $row)->getValue();
             $temp['d'] = $worksheet->getCell('H' . $row)->getValue();
+            $temp['group'] = $worksheet->getCell('I' . $row)->getValue();
 
             $dataTemp[] = $temp;
         }
@@ -792,6 +798,7 @@ class TrainingController extends Controller
                     $question = new Question();
                     $question->training_sub_id = $model->id;
                     $question->question = $key['question'];
+                    $question->question_group_id = $key['group'];
                     $question->save();
                     if ($key['a']) {
                         $answer = new Answer();
@@ -844,5 +851,42 @@ class TrainingController extends Controller
                 Log::error($e);
             }
         }
+    }
+
+    function downloadFormat()
+    {
+        $idx = 2;
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Pertanyaan');
+        $sheet->setCellValue('C1', 'Jenis Soal');
+        $sheet->setCellValue('D1', 'Jawaban');
+        $sheet->setCellValue('E1', 'A');
+        $sheet->setCellValue('F1', 'B');
+        $sheet->setCellValue('G1', 'C');
+        $sheet->setCellValue('H1', 'D');
+        $sheet->setCellValue('I1', 'Group ID');
+
+        $sheet1 = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'Question Group');
+        $spreadsheet->addSheet($sheet1, 1);
+        $sheet1 = $spreadsheet->getSheet(1);
+        $employees = QuestionGroup::all();
+        $sheet1->setCellValue('A1', 'ID');
+        $sheet1->setCellValue('B1', 'Group Name');
+
+        foreach ($employees as $key => $value) {
+            $sheet1->setCellValue('A' . $idx, $value->id);
+            $sheet1->setCellValue('B' . $idx, $value->name);
+            $idx++;
+        }
+
+        header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Format Upload Soal.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
     }
 }

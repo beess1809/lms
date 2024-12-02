@@ -52,6 +52,7 @@ Route::middleware('auth:employee')->group(function () {
         Route::post('trainee/dataTables2', [TrainingController::class, 'datatableTraineeRemedial'])->name('datatableTraineeRemedial');
         Route::post('trainee/dataTables3', [TrainingController::class, 'datatableTraineeFeedback'])->name('datatableTraineeFeedback');
         Route::post('upload-bulk', [TrainingController::class, 'uploadBulk'])->name('uploadBulk');
+        Route::get('download-format', [TrainingController::class, 'downloadFormat'])->name('downloadFormat');
         Route::resource('', TrainingController::class, ['parameters' => ['' => 'id']])->except([
             'index',
             'create',
