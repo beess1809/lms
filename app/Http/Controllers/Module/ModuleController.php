@@ -105,6 +105,7 @@ class ModuleController extends Controller
         $data['categories'] = Category::all();
         $data['types'] = ModuleType::all();
         $data['model'] =  Module::find($id);
+        $data['modules'] = Module::all();
         return view('module.form', $data);
     }
 

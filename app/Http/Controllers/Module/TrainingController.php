@@ -860,9 +860,9 @@ class TrainingController extends Controller
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'No');
-        $sheet->setCellValue('B1', 'Pertanyaan');
-        $sheet->setCellValue('C1', 'Jenis Soal');
-        $sheet->setCellValue('D1', 'Jawaban');
+        $sheet->setCellValue('B1', 'Question');
+        $sheet->setCellValue('C1', 'Question Type');
+        $sheet->setCellValue('D1', 'Question');
         $sheet->setCellValue('E1', 'A');
         $sheet->setCellValue('F1', 'B');
         $sheet->setCellValue('G1', 'C');
@@ -881,6 +881,17 @@ class TrainingController extends Controller
             $sheet1->setCellValue('B' . $idx, $value->name);
             $idx++;
         }
+
+        $sheet1 = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'Question Type');
+        $spreadsheet->addSheet($sheet1, 1);
+        $sheet1 = $spreadsheet->getSheet(1);
+        $employees = QuestionGroup::all();
+        $sheet1->setCellValue('A1', 'ID');
+        $sheet1->setCellValue('B1', 'Type Name');
+        $sheet1->setCellValue('A2', '1');
+        $sheet1->setCellValue('B2', 'Multiple Choice');
+        $sheet1->setCellValue('A3', '2');
+        $sheet1->setCellValue('B3', 'Essay');
 
         header('Content-type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="Format Upload Soal.xlsx"');
