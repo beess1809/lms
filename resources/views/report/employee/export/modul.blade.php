@@ -68,6 +68,7 @@
                                 <tr>
                                     <th style="text-align:left">Module Name</th>
                                     <th style="text-align:left;">Point</th>
+                                    <th style="text-align:left;">Submition Date</th>
                                     <th style="text-align:left;">Status</th>
                                 </tr>
                             </thead>
@@ -76,6 +77,25 @@
                                     <tr>
                                         <td style="text-align: left;">{{ $item['title'] }}</td>
                                         <td style="text-align: left">{{ $item['point'] }}</td>
+                                        @php
+                                            $training = App\Models\Trainee\TraineeTraining::join(
+                                                'trainings as t',
+                                                't.id',
+                                                '=',
+                                                'trainee_trainings.training_id',
+                                            )
+                                                ->where('t.module_id', $item['id'])
+                                                ->where('employee_uuid', $item['employee_uuid'])
+                                                ->get();
+                                            $count = count($training);
+                                            if ($count > 0) {
+                                                $date = $training[$count - 1]->finished_at;
+                                            } else {
+                                                $date = '';
+                                            }
+
+                                        @endphp
+                                        <td style="text-align: left">{{ $date }}</td>
                                         <td style="text-align: left">
                                             {{ $item['is_passed'] == 1 ? 'Passed' : 'Not Pass' }}</td>
                                     </tr>

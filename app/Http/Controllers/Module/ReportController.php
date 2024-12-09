@@ -266,11 +266,25 @@ class ReportController extends Controller
                 $string = $model->is_passed == 1 ? 'Passed' : 'Failed';
                 return $string;
             })
+            ->addColumn('submition', function ($model) {
+                $training = TraineeTraining::join('trainings as t', 't.id', '=', 'trainee_trainings.training_id')
+                    ->where('t.module_id', $model->id)
+                    ->where('employee_uuid', $model->employee_uuid)
+                    ->get();
+                $count = count($training);
+                if ($count > 0) {
+                    $date = $training[$count - 1]->finished_at;
+                } else {
+                    $date = '';
+                }
+                $string = $date;
+                return $string;
+            })
             ->addColumn('action', function ($model) {
                 $string = '<a href="' . route('report.employee.training', ['id' => base64_encode($model->employee_uuid . '|' . $model->trainee_module_id)]) . '" type="button" class="btn btn-outline-phintraco">Detail</button';
                 return $string;
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['action', 'submition'])
             ->make(true);
     }
 
