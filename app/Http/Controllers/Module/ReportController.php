@@ -248,6 +248,61 @@ class ReportController extends Controller
             ->where('employee_uuid', base64_decode($id))
             ->select('m.*', 'trainee_modules.point', 'trainee_modules.is_passed', 'trainee_modules.point', 'trainee_modules.employee_uuid', 'trainee_modules.id as trainee_module_id')
             ->get();
+
+        switch ($data['model']->company_id) {
+            case 1:
+                $data['img'] = 'pg.png';
+                break;
+            case 2:
+                $data['img'] = 'mitracomm.png';
+                break;
+            case 3:
+                $data['img'] = 'mitracomm.png';
+                break;
+            case 4:
+                $data['img'] = 'effist.png';
+                break;
+            case 5:
+                $data['img'] = 'njm.png';
+                break;
+            case 6:
+                $data['img'] = 'pe.png';
+                break;
+            case 7:
+                $data['img'] = 'phintech.png';
+                break;
+            case 8:
+                $data['img'] = 'asp.png';
+                break;
+            case 9:
+                $data['img'] = 'pnk.png';
+                break;
+            case 10:
+                $data['img'] = 'phincon.png';
+                break;
+            case 11:
+                $data['img'] = 'pei.png';
+                break;
+            case 12:
+                $data['img'] = 'pnp.png';
+                break;
+            case 16:
+                $data['img'] = 'vemisha.png';
+                break;
+            case 17:
+                $data['img'] = 'vemisha.png';
+                break;
+            case 1004:
+                $data['img'] = 'pms.png';
+                break;
+            case 1007:
+                $data['img'] = 'mitracomm.png';
+                break;
+            default:
+                $data['img'] = 'pg.png';
+                break;
+        }
+
         $pdf = Pdf::loadView('report.employee.export.modul', $data);
         return $pdf->download('Report Module - ' . $data['model']->name . '.pdf');
         // return view('report.employee.export.modul', $data);
@@ -309,6 +364,60 @@ class ReportController extends Controller
             ->where('t.module_id',  $data['module']->module_id)
             ->select('t.*', 'trainee_trainings.point', 'trainee_trainings.is_passed', 'trainee_trainings.id as trainee_training_id')
             ->get();
+
+        switch ($data['model']->company_id) {
+            case 1:
+                $data['img'] = 'pg.png';
+                break;
+            case 2:
+                $data['img'] = 'mitracomm.png';
+                break;
+            case 3:
+                $data['img'] = 'mitracomm.png';
+                break;
+            case 4:
+                $data['img'] = 'effist.png';
+                break;
+            case 5:
+                $data['img'] = 'njm.png';
+                break;
+            case 6:
+                $data['img'] = 'pe.png';
+                break;
+            case 7:
+                $data['img'] = 'phintech.png';
+                break;
+            case 8:
+                $data['img'] = 'asp.png';
+                break;
+            case 9:
+                $data['img'] = 'pnk.png';
+                break;
+            case 10:
+                $data['img'] = 'phincon.png';
+                break;
+            case 11:
+                $data['img'] = 'pei.png';
+                break;
+            case 12:
+                $data['img'] = 'pnp.png';
+                break;
+            case 16:
+                $data['img'] = 'vemisha.png';
+                break;
+            case 17:
+                $data['img'] = 'vemisha.png';
+                break;
+            case 1004:
+                $data['img'] = 'pms.png';
+                break;
+            case 1007:
+                $data['img'] = 'mitracomm.png';
+                break;
+            default:
+                $data['img'] = 'pg.png';
+                break;
+        }
 
         $pdf = Pdf::loadView('report.employee.export.training', $data);
         return $pdf->download('Report Training - ' . $data['model']->name . '.pdf');
@@ -380,7 +489,61 @@ class ReportController extends Controller
             ];
         }
 
-        $pdf = Pdf::loadView('report.employee.export.detail-training', ['model' => $detail, 'answers' => $traineeAnswers]);
+        switch ($detail->trainee->company_id) {
+            case 1:
+                $data['img'] = 'pg.png';
+                break;
+            case 2:
+                $data['img'] = 'mitracomm.png';
+                break;
+            case 3:
+                $data['img'] = 'mitracomm.png';
+                break;
+            case 4:
+                $data['img'] = 'effist.png';
+                break;
+            case 5:
+                $data['img'] = 'njm.png';
+                break;
+            case 6:
+                $data['img'] = 'pe.png';
+                break;
+            case 7:
+                $data['img'] = 'phintech.png';
+                break;
+            case 8:
+                $data['img'] = 'asp.png';
+                break;
+            case 9:
+                $data['img'] = 'pnk.png';
+                break;
+            case 10:
+                $data['img'] = 'phincon.png';
+                break;
+            case 11:
+                $data['img'] = 'pei.png';
+                break;
+            case 12:
+                $data['img'] = 'pnp.png';
+                break;
+            case 16:
+                $data['img'] = 'vemisha.png';
+                break;
+            case 17:
+                $data['img'] = 'vemisha.png';
+                break;
+            case 1004:
+                $data['img'] = 'pms.png';
+                break;
+            case 1007:
+                $data['img'] = 'mitracomm.png';
+                break;
+            default:
+                $data['img'] = 'pg.png';
+                break;
+        }
+
+        $pdf = Pdf::loadView('report.employee.export.detail-training', ['model' => $detail, 'answers' => $traineeAnswers, 'img' => $data['img']]);
         return $pdf->download('Report ' . $detail->training->module->title . ' - ' . $detail->training->title . ' - ' . $detail->trainee->name . '.pdf');
         // return view('report.employee.export.detail-training', ['model' => $detail, 'answers' => $traineeAnswers]);
     }

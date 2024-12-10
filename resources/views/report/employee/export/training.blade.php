@@ -35,6 +35,11 @@
 <body>
     <div class="row">
         <div class="col-md-12">
+            <table style="width:100%">
+                <tr>
+                    <td><img src="img/logo/{{ $img }}" style="width: 200px"></td>
+                </tr>
+            </table>
             <div class="card">
                 <div class="card-header">
                     <h5 class="card-title"><b>Detail Training Employee</b></h5>
