@@ -806,7 +806,7 @@ class TrainingController extends Controller
                         $answer->answer =  $key['a'];
                         $answer->save();
 
-                        if ($key['jawaban'] ==  'a') {
+                        if ($key['jawaban'] ==  'a' || $key['jawaban'] ==  'A') {
                             $question->answer_id = $answer->id;
                             $question->save();
                         }
@@ -817,7 +817,7 @@ class TrainingController extends Controller
                         $answer->answer =  $key['b'];
                         $answer->save();
 
-                        if ($key['jawaban'] ==  'b') {
+                        if ($key['jawaban'] ==  'b' || $key['jawaban'] ==  'B') {
                             $question->answer_id = $answer->id;
                             $question->save();
                         }
@@ -828,7 +828,7 @@ class TrainingController extends Controller
                         $answer->answer =  $key['c'];
                         $answer->save();
 
-                        if ($key['jawaban'] ==  'c') {
+                        if ($key['jawaban'] ==  'c' || $key['jawaban'] ==  'C') {
                             $question->answer_id = $answer->id;
                             $question->save();
                         }
@@ -839,7 +839,7 @@ class TrainingController extends Controller
                         $answer->answer =  $key['d'];
                         $answer->save();
 
-                        if ($key['jawaban'] ==  'd') {
+                        if ($key['jawaban'] ==  'd' || $key['jawaban'] ==  'D') {
                             $question->answer_id = $answer->id;
                             $question->save();
                         }
