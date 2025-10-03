@@ -862,7 +862,7 @@ class TrainingController extends Controller
         $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'Question');
         $sheet->setCellValue('C1', 'Question Type');
-        $sheet->setCellValue('D1', 'Question');
+        $sheet->setCellValue('D1', 'Answer');
         $sheet->setCellValue('E1', 'A');
         $sheet->setCellValue('F1', 'B');
         $sheet->setCellValue('G1', 'C');
