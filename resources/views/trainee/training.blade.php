@@ -74,7 +74,7 @@
                             <div class="col-md-12 mb-3" style="display: initial;justify-content: center;">
                                 @if ($sub->type_file == 3)
                                     <div class="file">
-                                        <video controls width="100%" height="500px" controlsList="nodownload">
+                                        <video id="trainingVideo" controls width="100%" height="500px" controlsList="nodownload">
                                             <source src="{{ route('sub.view', ['file' => base64_encode($sub->file)]) }}"
                                                 type="video/mp4">
                                             Your browser does not support the video tag.
@@ -124,14 +124,24 @@
     </script>
 
     <script>
-        var timeleft = {{ $model->duration }};
-        var downloadTimer = setInterval(function() {
-            if (timeleft <= 0) {
-                clearInterval(downloadTimer);
-                $('#submitTraining').show()
-            }
-            console.log(timeleft)
-            timeleft -= 1;
-        }, 1000);
+        var hasVideo = document.getElementById('trainingVideo');
+        
+        if (hasVideo) {
+            // If there's a video, show button only when video ends
+            hasVideo.addEventListener('ended', function() {
+                $('#submitTraining').show();
+            });
+        } else {
+            // If no video, use the original timer
+            var timeleft = {{ $model->duration }};
+            var downloadTimer = setInterval(function() {
+                if (timeleft <= 0) {
+                    clearInterval(downloadTimer);
+                    $('#submitTraining').show()
+                }
+                console.log(timeleft)
+                timeleft -= 1;
+            }, 1000);
+        }
     </script>
 @endpush
