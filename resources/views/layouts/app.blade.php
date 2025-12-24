@@ -88,7 +88,7 @@
 
         <nav class="main-header navbar navbar-expand-md navbar-light bg-phintraco">
             <div class="container-fluid mx-5">
-                <a href="../../index3.html" class="navbar-brand">
+                <a href="{{ route('dashboard') }}" class="navbar-brand">
                     <img src="{{ asset('img/phintraco-logo.png') }}" alt="AdminLTE Logo" class="brand-image"
                         style="opacity: .8">
                 </a>
