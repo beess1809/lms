@@ -644,38 +644,35 @@ class ReportController extends Controller
     public function feedbackDetails($id)
     {
         $data['model'] = TraineeTraining::find(base64_decode($id));
-        $answers = json_decode($data['model']->answer);
+        abort_if(!$data['model'], 404);
 
-        foreach ($answers as $key => $value) {
+        $answers = json_decode($data['model']->answer) ?: [];
+        $group = [];
 
-            $question = Question::find($value->question_id);
+        foreach ($answers as $value) {
+            $question = Question::with(['answer', 'group'])->find($value->question_id ?? null);
 
+            if (!$question) {
+                continue;
+            }
 
-            $group[$question->question_group_id] = array(
-                'group_name' => $question->group->name
-            );
-        }
+            $groupId = $question->question_group_id ?: 0;
 
-        foreach ($group as $key => $valu) {
-            $details = [];
-            foreach ($answers as $key2 => $value) {
-
-                $answer = Answer::find($value->answer_id);
-                $question = Question::find($value->question_id);
-
-                if ($key == $question->question_group_id) {
-                    $details[] = array(
-                        'question' => $question->question,
-                        'answers' => $question->answer,
-                        'answer' => ($answer ? $answer->answer : $value->answer_id),
-                    );
-                }
-
-                $group[$key] = array(
-                    'group_name' => $valu['group_name'],
-                    'details' => $details
+            if (!isset($group[$groupId])) {
+                $group[$groupId] = array(
+                    'group_name' => optional($question->group)->name ?: '-',
+                    'details' => []
                 );
             }
+
+            $answerValue = $value->answer_id ?? '';
+            $answer = is_numeric($answerValue) ? Answer::find($answerValue) : null;
+
+            $group[$groupId]['details'][] = array(
+                'question' => $question->question,
+                'answers' => $question->answer,
+                'answer' => ($answer ? $answer->answer : $answerValue),
+            );
         }
 
 
